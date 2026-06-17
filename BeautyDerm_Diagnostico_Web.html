@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeautyDerm · Diagnóstico Web 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F0EFEC;color:#1A1A1A;font-size:14px;line-height:1.6}
+.header{background:#12111F;color:#fff;padding:24px 36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.header-left h1{font-size:19px;font-weight:500;letter-spacing:-0.3px}
+.header-left p{font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px}
+.header-stats{display:flex;gap:24px}
+.stat{text-align:center}
+.stat .n{font-size:26px;font-weight:500}
+.stat .l{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.6px}
+.stat.red .n{color:#FF6B6B}
+.stat.ora .n{color:#FFB347}
+.stat.grn .n{color:#6FCF97}
+.nav{background:#fff;border-bottom:1px solid #E5E5E5;padding:0 36px;display:flex;gap:2px;position:sticky;top:0;z-index:50}
+.nb{padding:14px 18px;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:#999;border-bottom:2.5px solid transparent;transition:all .15s}
+.nb.active{color:#12111F;border-bottom-color:#C0392B}
+.main{max-width:920px;margin:0 auto;padding:28px 20px}
+.panel{display:none}
+.panel.active{display:block}
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.fl{font-size:11px;color:#999;margin-right:2px}
+.chip{padding:5px 14px;border-radius:999px;font-size:12px;border:1px solid #DDD;background:#fff;cursor:pointer;color:#666;transition:all .12s}
+.chip:hover{border-color:#AAA}
+.chip.active{background:#12111F;color:#fff;border-color:#12111F}
+.chip[data-f="critico"].active{background:#C0392B;border-color:#C0392B}
+.chip[data-f="alto"].active{background:#C35A00;border-color:#C35A00}
+.chip[data-f="medio"].active{background:#1565C0;border-color:#1565C0}
+.chip[data-f="seo"].active{background:#2E7D32;border-color:#2E7D32}
+.fc{background:#fff;border-radius:10px;border:1px solid #E5E5E5;margin-bottom:8px;overflow:hidden;transition:box-shadow .15s}
+.fc:hover{box-shadow:0 2px 10px rgba(0,0,0,0.07)}
+.fc-h{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;user-select:none}
+.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sdot.critico{background:#C0392B}
+.sdot.alto{background:#C35A00}
+.sdot.medio{background:#1565C0}
+.sdot.seo{background:#2E7D32}
+.sbadge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:4px;flex-shrink:0}
+.sbadge.critico{background:#FDECEA;color:#C0392B}
+.sbadge.alto{background:#FFF3E0;color:#C35A00}
+.sbadge.medio{background:#E3F2FD;color:#1565C0}
+.sbadge.seo{background:#E8F5E9;color:#2E7D32}
+.fc-title{font-size:13.5px;font-weight:500;flex:1;min-width:0}
+.fc-loc{font-size:11.5px;color:#999;margin-left:auto;white-space:nowrap;flex-shrink:0;padding-left:8px}
+.chevron{color:#CCC;font-size:18px;margin-left:4px;transition:transform .18s;flex-shrink:0}
+.fc.open .chevron{transform:rotate(90deg)}
+.fc-body{display:none;padding:0 16px 14px 34px;border-top:1px solid #F2F2F2}
+.fc.open .fc-body{display:block}
+.fc-desc{font-size:13px;color:#444;line-height:1.65;margin-top:12px;margin-bottom:10px}
+.fc-action{display:flex;align-items:flex-start;gap:8px;background:#F9F9F7;border-radius:6px;padding:9px 12px;font-size:12.5px;color:#333;line-height:1.5}
+.fc-action::before{content:"→";color:#C0392B;font-weight:700;flex-shrink:0}
+.sh{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#AAA;margin:22px 0 10px}
+.cc{background:#fff;border-radius:10px;border:1px solid #E5E5E5;margin-bottom:14px;overflow:hidden}
+.cc-header{padding:14px 18px;display:flex;align-items:baseline;justify-content:space-between;border-bottom:1px solid #F0F0F0}
+.cc-name{font-size:15px;font-weight:500}
+.cc-meta{font-size:12px;color:#999}
+.cc-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.col-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px}
+.col-title.ref{color:#AAA}
+.col-title.bd{color:#2E7D32}
+.ci{font-size:12.5px;color:#444;padding:6px 0;border-bottom:1px solid #F5F5F5;display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.ci:last-child{border-bottom:none}
+.bd-col .ci::before{content:"✓";color:#2E7D32;font-size:12px;flex-shrink:0;margin-top:1px;font-weight:700}
+.ref-col .ci::before{content:"·";color:#CCC;flex-shrink:0;font-size:16px;margin-top:-2px}
+.activos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}
+.activo-card{background:#fff;border-radius:10px;border:1px solid #E5E5E5;padding:14px 16px;border-top:3px solid #2E7D32}
+.activo-card.navy{border-top-color:#12111F}
+.activo-card.red{border-top-color:#C0392B}
+.activo-card.ora{border-top-color:#C35A00}
+.activo-card .at{font-size:13px;font-weight:500;margin-bottom:3px}
+.activo-card .ad{font-size:12px;color:#777;line-height:1.5}
+.plan-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pcol{background:#fff;border-radius:10px;border:1px solid #E5E5E5;overflow:hidden}
+.pcol-hdr{padding:12px 14px}
+.pcol-hdr.wk1{background:#FDECEA}
+.pcol-hdr.wk2{background:#FFF3E0}
+.pcol-hdr.mo2{background:#E8F5E9}
+.pcol-hdr .ptitle{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.pcol-hdr.wk1 .ptitle{color:#C0392B}
+.pcol-hdr.wk2 .ptitle{color:#C35A00}
+.pcol-hdr.mo2 .ptitle{color:#2E7D32}
+.pbar{height:3px;background:rgba(0,0,0,0.08);border-radius:2px;margin-top:8px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:2px;transition:width .3s}
+.pcol-hdr.wk1 .pbar-fill{background:#C0392B}
+.pcol-hdr.wk2 .pbar-fill{background:#C35A00}
+.pcol-hdr.mo2 .pbar-fill{background:#2E7D32}
+.pcounts{font-size:11px;margin-top:4px}
+.pcol-hdr.wk1 .pcounts{color:#C0392B}
+.pcol-hdr.wk2 .pcounts{color:#C35A00}
+.pcol-hdr.mo2 .pcounts{color:#2E7D32}
+.pitems{padding:8px}
+.pitem{display:flex;align-items:flex-start;gap:8px;padding:7px 6px;border-radius:6px;cursor:pointer;transition:background .1s;border-bottom:1px solid #F5F5F5}
+.pitem:last-child{border-bottom:none}
+.pitem:hover{background:#F8F8F8}
+.pitem input{margin-top:2px;flex-shrink:0;accent-color:#12111F;cursor:pointer;width:13px;height:13px}
+.pitem label{font-size:12px;color:#333;line-height:1.5;cursor:pointer}
+.pitem.done label{color:#BBB;text-decoration:line-through}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>BeautyDerm · Diagnóstico Web</h1>
+    <p>beautyderm.com.ar · 7 páginas auditadas · Junio 2026</p>
+  </div>
+  <div class="header-stats">
+    <div class="stat"><div class="n">23</div><div class="l">hallazgos</div></div>
+    <div class="stat red"><div class="n">4</div><div class="l">críticos</div></div>
+    <div class="stat ora"><div class="n">8</div><div class="l">altos</div></div>
+    <div class="stat grn"><div class="n">7</div><div class="l">activos sin usar</div></div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nb active" onclick="showTab('hallazgos')">Hallazgos técnicos</button>
+  <button class="nb" onclick="showTab('benchmark')">Benchmark competitivo</button>
+  <button class="nb" onclick="showTab('activos')">Activos propios</button>
+  <button class="nb" onclick="showTab('plan')">Plan de acción</button>
+</nav>
+
+<div class="main">
+
+<!-- ─────────────────────────────────────────────────────── TAB 1 -->
+<div class="panel active" id="panel-hallazgos">
+  <div class="filters">
+    <span class="fl">Filtrar:</span>
+    <button class="chip active" data-f="all" onclick="filterCards('all')">Todos (23)</button>
+    <button class="chip" data-f="critico" onclick="filterCards('critico')">Crítico (4)</button>
+    <button class="chip" data-f="alto" onclick="filterCards('alto')">Alto (8)</button>
+    <button class="chip" data-f="medio" onclick="filterCards('medio')">Medio (6)</button>
+    <button class="chip" data-f="seo" onclick="filterCards('seo')">SEO (5)</button>
+  </div>
+  <div id="cards-wrap"></div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────── TAB 2 -->
+<div class="panel" id="panel-benchmark">
+  <p style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.6">Revisé tres sitios del mercado para identificar prácticas útiles y entender dónde BeautyDerm ya tiene ventaja. La comparativa está organizada por lo que se puede tomar como referencia y lo que BeautyDerm ya tiene que ellos no.</p>
+
+  <div class="sh">Dr. Felice — drfelice.com.ar (Recoleta · segmento premium)</div>
+  <div class="cc">
+    <div class="cc-body">
+      <div class="ref-col">
+        <div class="col-title ref">Prácticas de referencia</div>
+        <div class="ci">Galería de pacientes conocidos como proof of authority visual inmediato (Cristina Pérez, Pamela David, Marley). No necesitás celebridades — años de fidelización son un argumento igual de potente.</div>
+        <div class="ci">Sección de PRENSA con entrevistas en TV: comunica autoridad de manera que el copy nunca puede. Si algún profesional del staff fue a congresos o tiene cobertura mediática, ese material debería estar en el sitio.</div>
+        <div class="ci">Videos en Vimeo en vez del servidor propio. Mejor performance, sin costo de ancho de banda.</div>
+        <div class="ci">LinkedIn en el footer: detalle pequeño que suma credibilidad frente a pacientes exigentes.</div>
+      </div>
+      <div class="bd-col">
+        <div class="col-title bd">BeautyDerm ya tiene esto — Dr. Felice no</div>
+        <div class="ci">Blog activo con artículos de 2026 sobre tratamientos reales</div>
+        <div class="ci">Tienda online con productos, precios, 6 cuotas y envíos</div>
+        <div class="ci">Equipo multidisciplinario de 10+ profesionales (Dr. Felice muestra solo al titular)</div>
+        <div class="ci">Meta tags trabajadas: Dr. Felice tiene og:image y og:description vacíos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh">Esthetics One — centrodeestetica.ar (Belgrano)</div>
+  <div class="cc">
+    <div class="cc-body">
+      <div class="ref-col">
+        <div class="col-title ref">Prácticas de referencia</div>
+        <div class="ci">CTA unificado: todos los botones van al mismo WhatsApp via wa.link. El visitante nunca tiene dudas sobre cómo contactar. BeautyDerm tiene CTAs dispersos que generan fricción evitable.</div>
+        <div class="ci">Descuentos con % concreto visibles desde el home (40% OFF botox, 20% OFF mesoterapia). Activa la consulta antes de que el visitante llegue a /tratamientos/.</div>
+        <div class="ci">og:image con foto real de paciente. La preview en WhatsApp/Instagram representa el negocio.</div>
+        <div class="ci">Meta description personalizada con ubicación y propuesta de valor en 150 caracteres.</div>
+      </div>
+      <div class="bd-col">
+        <div class="col-title bd">BeautyDerm ya tiene esto — Esthetics One no</div>
+        <div class="ci">Tienda online operativa — Esthetics One no tiene e-commerce</div>
+        <div class="ci">Equipo médico amplio y multidisciplinario</div>
+        <div class="ci">Trayectoria y base de pacientes de largo plazo que un centro más nuevo no puede tener</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh">MA Medicina Estética — Dra. Milagros Alcorta (Vicente López)</div>
+  <div class="cc">
+    <div class="cc-body">
+      <div class="ref-col">
+        <div class="col-title ref">Prácticas de referencia</div>
+        <div class="ci">Bio con matrícula, universidad, posgrado, cargo docente en UBA y rol como formadora. Genera confianza clínica verificable. Agregar estos datos a las bios del staff de BeautyDerm transformaría la percepción del equipo.</div>
+        <div class="ci">Antes/después con texto HTML descriptivo por tratamiento (indexable por Google). BeautyDerm tiene resultados reales en Instagram que podrían trasladarse al sitio de esta manera.</div>
+        <div class="ci">Google Reviews embedidas con fotos reales de perfil. Verificables, no curatoriales.</div>
+        <div class="ci">Menú de tratamientos con 8 subcategorías como páginas independientes (cada una es una URL indexable).</div>
+      </div>
+      <div class="bd-col">
+        <div class="col-title bd">BeautyDerm ya tiene esto — MA no</div>
+        <div class="ci">Equipo de 10+ profesionales en distintas especialidades (práctica unipersonal vs. equipo multidisciplinario)</div>
+        <div class="ci">Tienda online y blog activo</div>
+        <div class="ci">Testimonios en video de pacientes reales — mucho más potentes que reseñas de texto</div>
+        <div class="ci">Historia del centro y pacientes que vuelven de largo plazo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────── TAB 3 -->
+<div class="panel" id="panel-activos">
+  <p style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.6">BeautyDerm tiene ventajas competitivas reales que no están reflejadas en el sitio. No son cosas para construir desde cero — existen y requieren decisiones de contenido, no de desarrollo.</p>
+
+  <div class="activos-grid">
+    <div class="activo-card red">
+      <div class="at">Trayectoria y fidelización</div>
+      <div class="ad">Pacientes que vuelven de largo plazo son un activo que ningún competidor nuevo puede tener. Los años del centro y la base de pacientes fidelizados no están mencionados en ninguna de las 7 páginas auditadas.</div>
+    </div>
+    <div class="activo-card navy">
+      <div class="at">Formación continua y congresos</div>
+      <div class="ad">Si el staff participa de congresos, tiene certificaciones o membresías en sociedades médicas, ese material debería estar en las bios. Ningún competidor lo tiene bien resuelto.</div>
+    </div>
+    <div class="activo-card">
+      <div class="at">Equipo multidisciplinario</div>
+      <div class="ad">Cirugía plástica, ginecología, dermatología, nutrición, fisioterapia en un mismo centro. Las bios no tienen matrículas ni instituciones, lo que hace que el equipo parezca genérico cuando no lo es.</div>
+    </div>
+    <div class="activo-card ora">
+      <div class="at">Testimonios en video</div>
+      <div class="ad">Algo que ningún competidor analizado tiene. El problema es que están en /inicio/testimonios/, desconectados del flujo principal. Reubicarlos al home multiplicaría el impacto sin crear contenido nuevo.</div>
+    </div>
+    <div class="activo-card">
+      <div class="at">Tienda online</div>
+      <div class="ad">Ningún competidor tiene e-commerce. BeautyDerm tiene tienda con 6 cuotas, 10% transferencia y envíos. Pero los botones de categorías están rotos y el home muestra los productos sin precios.</div>
+    </div>
+    <div class="activo-card navy">
+      <div class="at">Blog médico actualizado</div>
+      <div class="ad">6+ artículos de 2026 sobre tratamientos reales (Sculptra, Profhilo, labios, depilación). Dr. Felice y Esthetics One no tienen blog. Solo falta agregarle imágenes reales a cada artículo.</div>
+    </div>
+    <div class="activo-card red">
+      <div class="at">Antes/después</div>
+      <div class="ad">Los resultados están en Instagram. El salto al sitio es mínimo: publicarlos con texto descriptivo en HTML los hace indexables y convierte mejor que cualquier copy.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────────────────── TAB 4 -->
+<div class="panel" id="panel-plan">
+  <p style="font-size:13px;color:#666;margin-bottom:20px">Hacé clic en cada tarea para marcarla. El progreso se actualiza automáticamente.</p>
+  <div class="plan-cols" id="plan-wrap"></div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+const findings = [
+  {s:'critico',title:'URLs de testdev publicadas en tienda',loc:'/tienda/ — Ofertas y Combos',desc:'Los botones "VER MÁS >>" en las secciones Ofertas y Combos apuntan a beautyderm.com.ar.testdev.com.ar — un entorno de desarrollo que quedó publicado en producción. El botón se ve normal; el error solo es visible inspeccionando el link. Cualquier usuario que hace clic llega a una dirección rota.',action:'Entrar a Elementor en la página de Tienda y reemplazar las URLs por las correctas: /product-category/ofertas/ y /product-category/combos/'},
+  {s:'critico',title:'Footer triplicado con teléfonos distintos',loc:'Todas las páginas',desc:'El footer está triplicado en el HTML (desktop, mobile y una tercera versión). El desktop muestra (011) 11 5109 5879, el mobile muestra (011) 11 5494 3993. Un paciente que llega desde el celular ve un número diferente al de escritorio. Verificado en home, nosotros, tienda, testimonios, blog y contacto.',action:'Unificar el footer en un único componente global. Decidir cuál número es el correcto y actualizar los tres bloques.'},
+  {s:'critico',title:'Staff duplicado en /nosotros/',loc:'/nosotros/ — sección equipo',desc:'El equipo aparece dos veces: primero en cards grandes con bio, luego en una galería de cards pequeñas. Es un widget de Elementor duplicado. Las dos versiones tienen inconsistencias: Ivana Frias tiene fotos diferentes en cada bloque, y algunos profesionales aparecen con datos distintos.',action:'Eliminar uno de los dos bloques. Si se mantiene la galería compacta, hacerla la única versión. Actualizar la foto de Ivana en el card pequeño.'},
+  {s:'critico',title:'Artículos del blog duplicados + imágenes placeholder',loc:'/blog/',desc:'La grilla de artículos se renderiza dos veces seguidas (mismo patrón de Elementor que en /nosotros/). Además, todos los artículos usan la misma imagen placeholder sin excepción — ninguno tiene imagen destacada real.',action:'Eliminar el bloque duplicado en el editor. Agregar imágenes destacadas reales a cada artículo.'},
+  {s:'alto',title:'CTA del hero va a #home — no hace nada',loc:'Home — hero',desc:'El botón "COMUNICATE CON NOSOTROS" en el hero del home tiene href="#home". Cuando alguien hace clic, scrollea al inicio de la misma página. No abre WhatsApp, no va al formulario: no hace nada útil. Es el CTA más visible de todo el sitio.',action:'Cambiar el href a wa.me/5491151095879 con un mensaje predefinido, igual que los CTAs de /tratamientos/.'},
+  {s:'alto',title:'FAQ duplicado + texto placeholder visible',loc:'/tratamientos/',desc:'Las 4 preguntas frecuentes aparecen duplicadas (mismo bloque dos veces). Además, hay un widget de Elementor vacío publicado con el texto "Añade aquí tu texto de cabecera".',action:'Eliminar el bloque duplicado de FAQ y el widget vacío desde el editor.'},
+  {s:'alto',title:'"3 cuotas" vs "6 cuotas" — información contradictoria',loc:'Home — sección tienda',desc:'El texto del home dice "pueden ser tuyos a 3 cuotas sin interés". El banner sitewide, la tienda y todos los productos dicen 6 cuotas. Un mismo visitante ve información contradictoria en la misma pantalla.',action:'Corregir el texto del home a "6 cuotas sin interés".'},
+  {s:'alto',title:'Testimonios ausente del menú del blog',loc:'/blog/ — navegación',desc:'El nav del blog no incluye el link a Testimonios, a diferencia de todas las otras páginas del sitio. Quien llega al blog no puede navegar a /testimonios/ desde ahí.',action:'Agregar "Testimonios" al menú del blog para que sea idéntico al del resto del sitio.'},
+  {s:'alto',title:'Typo: "Exterprise Médico"',loc:'/tratamientos/ — sección diferenciadores',desc:'Uno de los íconos de diferenciación dice "Exterprise Médico". Debería decir "Expertise Médico".',action:'Corregir el texto en el editor de Elementor.'},
+  {s:'alto',title:'Adrian Rodriguez en sección de equipo médico',loc:'/nosotros/',desc:'"Comisionista" (responsable de logística de distribución) aparece listado junto a médicos estéticos y cirujanos plásticos. Para un paciente evaluando el staff clínico, rompe la lectura.',action:'Crear una sección separada de "Equipo administrativo" o directamente no incluirlo en /nosotros/ si el foco es el equipo clínico.'},
+  {s:'alto',title:'Productos sin precio en el home',loc:'Home — sección tienda',desc:'Los 4 productos de la sección Tienda en el home no muestran precio. Solo el nombre y el botón "Añadir al carrito". En la tienda sí tienen precios, pero el visitante que llega desde el home no puede evaluar si le interesa.',action:'Mostrar el precio en las cards de producto del home, o al menos el rango "Desde $X".'},
+  {s:'alto',title:'Videos de testimonios alojados en el servidor',loc:'/inicio/testimonios/',desc:'Los videos están en /wp-content/uploads/testimonios/ en el servidor propio. Esto consume ancho de banda y afecta la velocidad de carga. Los videos pesan y el servidor WordPress no está optimizado para streaming.',action:'Subir los videos a YouTube (pueden ser no listados) e incrustar con iframe.'},
+  {s:'medio',title:'og:image es una línea decorativa de 1920×142px',loc:'Home',desc:'La og:image asignada es linea-con-piquito.png — una imagen decorativa de separación. Cuando alguien comparte el link en WhatsApp o Instagram, la preview muestra esa línea en lugar de algo que represente el negocio.',action:'Asignar una og:image específica: foto del local, del equipo o imagen de marca. Mínimo 1200×630px.'},
+  {s:'medio',title:'Testimonios como imágenes — no indexables',loc:'/tratamientos/ — sección experiencias',desc:'Las reseñas de la sección "Experiencias BeautyDerm" están dentro de imágenes. El texto no es indexable ni accesible. Google no puede leer lo que dicen las reseñas.',action:'Reemplazar con componentes de texto real en HTML, o complementar las imágenes con el texto de la reseña como overlay accesible.'},
+  {s:'medio',title:'Cuotas inconsistentes entre secciones',loc:'Home vs. tienda vs. banner',desc:'Home dice "3 cuotas", el banner sitewide y la tienda dicen "6 cuotas". Múltiples menciones contradictorias en el mismo sitio.',action:'Unificar todas las menciones a "6 cuotas sin interés". Hacer una búsqueda global del texto "3 cuotas" y corregir.'},
+  {s:'medio',title:'Ivana Frias con fotos distintas en las dos secciones',loc:'/nosotros/',desc:'Las dos instancias del bloque de staff (el error del duplicado) tienen fotos diferentes de Ivana Frias — una actualizada y una del 2023.',action:'Actualizar la foto del card pequeño para que coincida con la foto actual.'},
+  {s:'seo',title:'Sin schema markup en ninguna página',loc:'Global — todas las páginas',desc:'No hay schema markup en ninguna de las 7 páginas. Para un centro médico, MedicalOrganization, LocalBusiness y Person (por cada profesional con matrícula) son fundamentales para rich snippets y búsquedas locales.',action:'Implementar schema JSON-LD: MedicalOrganization + LocalBusiness en home. Person por cada médico con matrícula. FAQPage en /tratamientos/.'},
+  {s:'seo',title:'og:type="article" en páginas estáticas',loc:'/nosotros/, /tratamientos/, /contacto/',desc:'Estas tres páginas tienen og:type="article" cuando son páginas estáticas de negocio, no artículos. Afecta cómo las indexa Facebook y LinkedIn y cómo se renderizan las previsualizaciones.',action:'Cambiar og:type a "website" en todas las páginas que no sean posts del blog.'},
+  {s:'seo',title:'Meta description demasiado corta en home',loc:'Home',desc:'La meta description del home es "Centro Medico Estético" — sin keywords, sin ubicación, sin diferenciación. No posiciona para ninguna búsqueda específica y no invita al clic en resultados de Google.',action:'Escribir una description de 130–155 caracteres con nombre, servicios principales, ubicación y diferenciador.'},
+  {s:'seo',title:'Meta descriptions por defecto en tienda y testimonios',loc:'/tienda/, /testimonios/',desc:'La tienda tiene el texto por defecto de WooCommerce: "Aquí es donde puedes ver los productos en esta tienda." Testimonios tiene: "Visita la entrada para saber más." Son textos automáticos de WordPress sin ninguna personalización.',action:'Escribir meta descriptions específicas para cada página con keywords reales del negocio.'},
+  {s:'seo',title:'URL /inicio/testimonios/ — jerarquía innecesaria',loc:'/inicio/testimonios/',desc:'La URL de Testimonios tiene una jerarquía /inicio/ que no tiene sentido semántico y perjudica el posicionamiento de esa página.',action:'Cambiar el slug a /testimonios/ directamente. Agregar redirect 301 desde la URL vieja para no perder el posicionamiento acumulado.'},
+];
+
+const planItems = {
+  wk1: [
+    'Corregir URLs testdev en tienda (Elementor)',
+    'Unificar teléfono en los 3 bloques del footer',
+    'Cambiar CTA del hero a link de WhatsApp',
+    'Eliminar bloque duplicado de staff en /nosotros/',
+    'Eliminar bloque duplicado de FAQ en /tratamientos/ + texto placeholder',
+    'Eliminar bloque duplicado de artículos en /blog/',
+    'Corregir "3 cuotas" → "6 cuotas" en el home',
+    'Corregir "Exterprise" → "Expertise" en /tratamientos/',
+    'Actualizar foto de Ivana en el card pequeño de staff',
+    'Agregar "Testimonios" al menú del blog',
+  ],
+  wk2: [
+    'Unificar todos los CTAs del staff a un destino',
+    'Separar Adrian Rodriguez del equipo médico',
+    'Agregar precios a los productos del home',
+    'Asignar og:image real al home (foto del local o equipo)',
+    'Cambiar og:type a "website" en /nosotros/, /tratamientos/, /contacto/',
+    'Migrar videos de testimonios a YouTube e incrustar',
+    'Agregar imágenes reales a los artículos del blog',
+    'Escribir meta descriptions para home, tienda y testimonios',
+    'Mover testimonios en video al home y a /tratamientos/',
+  ],
+  mo2: [
+    'Agregar antigüedad del centro y pacientes atendidos al home',
+    'Reescribir las bios con matrícula, universidad, posgrado y congresos',
+    'Incorporar congresos/formación reciente por cada profesional',
+    'Agregar antes/después reales al sitio (desde Instagram, con texto HTML)',
+    'Implementar schema JSON-LD: MedicalOrganization + LocalBusiness + Person',
+    'Cambiar URL /inicio/testimonios/ → /testimonios/ + redirect 301',
+    'Crear subcategorías de tratamientos como páginas independientes',
+    'Agregar Google Reviews embebidas al home o /nosotros/',
+    'Crear página /faq/ con schema FAQPage',
+    'Revisar y corregir todas las meta descriptions con keywords reales',
+  ],
+};
+
+function severityLabel(s){return {critico:'Crítico',alto:'Alto',medio:'Medio',seo:'SEO'}[s]||s}
+
+function renderCards(){
+  const wrap = document.getElementById('cards-wrap');
+  const groups = [{key:'critico',label:'Críticos — corregir esta semana'},{key:'alto',label:'Altos — esta quincena'},{key:'medio',label:'Medios — próximo mes'},{key:'seo',label:'SEO — impacto acumulativo'}];
+  let html='';
+  groups.forEach(g=>{
+    const items=findings.filter(f=>f.s===g.key);
+    html+=`<div class="sh" data-group="${g.key}">${g.label}</div>`;
+    items.forEach((f,i)=>{
+      const id=`fc-${g.key}-${i}`;
+      html+=`<div class="fc" data-s="${f.s}" id="${id}">
+        <div class="fc-h" onclick="toggleCard('${id}')">
+          <span class="sdot ${f.s}"></span>
+          <span class="sbadge ${f.s}">${severityLabel(f.s)}</span>
+          <span class="fc-title">${f.title}</span>
+          <span class="fc-loc">${f.loc}</span>
+          <span class="chevron">›</span>
+        </div>
+        <div class="fc-body">
+          <div class="fc-desc">${f.desc}</div>
+          <div class="fc-action">${f.action}</div>
+        </div>
+      </div>`;
+    });
+  });
+  wrap.innerHTML=html;
+}
+
+function toggleCard(id){
+  const el=document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+function filterCards(f){
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.chip[data-f="${f}"]`).classList.add('active');
+  document.querySelectorAll('.fc').forEach(card=>{
+    const show = f==='all' || card.dataset.s===f;
+    card.style.display=show?'':'none';
+  });
+  document.querySelectorAll('.sh').forEach(sh=>{
+    if(f==='all'){sh.style.display='';return;}
+    const group=sh.dataset.group;
+    sh.style.display=group===f?'':'none';
+  });
+}
+
+function renderPlan(){
+  const wrap = document.getElementById('plan-wrap');
+  const cols=[
+    {key:'wk1',cls:'wk1',title:'Esta semana'},
+    {key:'wk2',cls:'wk2',title:'Próximas 2-3 semanas'},
+    {key:'mo2',cls:'mo2',title:'Mes 2'},
+  ];
+  const state={};
+  let html='';
+  cols.forEach(col=>{
+    const items=planItems[col.key];
+    html+=`<div class="pcol">
+      <div class="pcol-hdr ${col.cls}">
+        <div class="ptitle">${col.title}</div>
+        <div class="pbar"><div class="pbar-fill" id="bar-${col.key}" style="width:0%"></div></div>
+        <div class="pcounts" id="cnt-${col.key}">0 / ${items.length}</div>
+      </div>
+      <div class="pitems" id="items-${col.key}">`;
+    items.forEach((task,i)=>{
+      const cid=`cb-${col.key}-${i}`;
+      html+=`<div class="pitem" id="row-${cid}" onclick="toggleTask('${cid}','${col.key}',${items.length})">
+        <input type="checkbox" id="${cid}" onclick="event.stopPropagation();toggleTask('${cid}','${col.key}',${items.length})">
+        <label for="${cid}">${task}</label>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+function toggleTask(cid,colKey,total){
+  const cb=document.getElementById(cid);
+  const row=document.getElementById(`row-${cid}`);
+  cb.checked=!cb.checked;
+  row.classList.toggle('done',cb.checked);
+  const done=document.querySelectorAll(`#items-${colKey} input:checked`).length;
+  document.getElementById(`bar-${colKey}`).style.width=Math.round(done/total*100)+'%';
+  document.getElementById(`cnt-${colKey}`).textContent=`${done} / ${total}`;
+}
+
+function showTab(tab){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  document.querySelector(`.nb[onclick="showTab('${tab}')"]`).classList.add('active');
+}
+
+renderCards();
+renderPlan();
+</script>
+</body>
+</html>

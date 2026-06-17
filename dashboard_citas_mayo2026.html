@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeautyDerm · Dashboard Citas · Mayo 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #17171f;
+    --surface2: #1e1e28;
+    --border: #2a2a38;
+    --accent: #c9a96e;
+    --accent2: #e8c98a;
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --red: #e05c6a;
+    --green: #5cba8a;
+    --blue: #5c8ae0;
+    --purple: #9b72cf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  header h1 { font-size: 20px; font-weight: 600; letter-spacing: .5px; color: var(--accent2); }
+  header h1 span { color: var(--text2); font-weight: 400; font-size: 14px; margin-left: 12px; }
+  .period-badge {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px; font-size: 12px; color: var(--text2);
+  }
+
+  main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 20px; position: relative; overflow: hidden;
+  }
+  .kpi::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent);
+  }
+  .kpi.green::before { background: var(--green); }
+  .kpi.red::before { background: var(--red); }
+  .kpi.blue::before { background: var(--blue); }
+  .kpi.purple::before { background: var(--purple); }
+  .kpi label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text2); display: block; margin-bottom: 8px; }
+  .kpi .value { font-size: 36px; font-weight: 700; line-height: 1; }
+  .kpi .sub { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .kpi .sub b { color: var(--accent); }
+
+  /* Grid layouts */
+  .row { display: grid; gap: 20px; margin-bottom: 20px; }
+  .row.col2 { grid-template-columns: 1fr 1fr; }
+  .row.col3 { grid-template-columns: 1fr 1fr 1fr; }
+  .row.col13 { grid-template-columns: 1fr 2fr; }
+  .row.col31 { grid-template-columns: 2fr 1fr; }
+  .row.col21 { grid-template-columns: 2fr 1fr; }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+  }
+  .card h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--text2); margin-bottom: 16px; }
+  .card h2 em { font-style: normal; color: var(--accent); }
+
+  /* Funnel */
+  .funnel { display: flex; flex-direction: column; gap: 6px; }
+  .funnel-step {
+    display: flex; align-items: center; gap: 10px; position: relative;
+  }
+  .funnel-bar-wrap { flex: 1; background: var(--surface2); border-radius: 6px; height: 40px; overflow: hidden; }
+  .funnel-bar {
+    height: 100%; display: flex; align-items: center; padding: 0 14px;
+    font-size: 13px; font-weight: 600; transition: width .6s ease;
+    border-radius: 6px;
+  }
+  .funnel-label { width: 110px; font-size: 11px; color: var(--text2); text-align: right; }
+  .funnel-pct { width: 44px; font-size: 12px; font-weight: 700; text-align: right; }
+  .funnel-drop { font-size: 10px; color: var(--red); width: 50px; }
+
+  /* Table profesionales */
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 10px; text-transform: uppercase; letter-spacing: .8px; color: var(--text2); padding: 0 8px 10px; text-align: left; }
+  td { padding: 10px 8px; border-top: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
+  tr:hover td { background: var(--surface2); }
+  .bar-mini { background: var(--surface2); border-radius: 3px; height: 6px; overflow: hidden; }
+  .bar-mini-fill { height: 100%; border-radius: 3px; }
+
+  /* Donut center */
+  .chart-wrap { position: relative; }
+  .chart-center {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none;
+  }
+  .chart-center .big { font-size: 28px; font-weight: 700; }
+  .chart-center .small { font-size: 11px; color: var(--text2); }
+
+  /* Badges */
+  .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 600; }
+  .badge.g { background: rgba(92,186,138,.15); color: var(--green); }
+  .badge.r { background: rgba(224,92,106,.15); color: var(--red); }
+  .badge.y { background: rgba(201,169,110,.15); color: var(--accent); }
+  .badge.b { background: rgba(92,138,224,.15); color: var(--blue); }
+
+  /* Insight boxes */
+  .insight {
+    background: var(--surface2); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; line-height: 1.5;
+  }
+  .insight.red { border-color: var(--red); }
+  .insight.green { border-color: var(--green); }
+  .insight strong { color: var(--accent2); }
+  .insight.red strong { color: var(--red); }
+  .insight.green strong { color: var(--green); }
+
+  /* Retención */
+  .ret-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .ret-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .ret-label { font-size: 12px; color: var(--text2); flex: 1; }
+  .ret-val { font-size: 15px; font-weight: 700; }
+  .ret-pct { font-size: 11px; color: var(--text2); }
+
+  footer { text-align: center; padding: 24px; color: var(--text2); font-size: 11px; border-top: 1px solid var(--border); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>BeautyDerm <span>· Dashboard Operativo</span></h1>
+  <div class="period-badge">Mayo 2026 · 453 citas · 1 sucursal</div>
+</header>
+
+<main>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <label>Total citas</label>
+      <div class="value">453</div>
+      <div class="sub">Mayo completo</div>
+    </div>
+    <div class="kpi green">
+      <label>Atendidas</label>
+      <div class="value" style="color:var(--green)">350</div>
+      <div class="sub"><b>77.3%</b> de efectividad</div>
+    </div>
+    <div class="kpi red">
+      <label>Caída de agenda</label>
+      <div class="value" style="color:var(--red)">103</div>
+      <div class="sub">Cancel. + no-show + elim.</div>
+    </div>
+    <div class="kpi blue">
+      <label>Pagadas</label>
+      <div class="value" style="color:var(--blue)">253</div>
+      <div class="sub"><b>55.9%</b> del total agendado</div>
+    </div>
+    <div class="kpi purple">
+      <label>Pacientes únicos</label>
+      <div class="value" style="color:var(--purple)">252</div>
+      <div class="sub">Prom. <b>1.8</b> citas / paciente</div>
+    </div>
+  </div>
+
+  <!-- KPIs Revenue -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px">
+    <div class="kpi" style="border-color:rgba(201,169,110,.3)">
+      <label>Facturación mayo</label>
+      <div class="value" style="font-size:26px;color:var(--accent2)">$188.7M</div>
+      <div class="sub">ARS · total ventas</div>
+    </div>
+    <div class="kpi" style="border-color:rgba(201,169,110,.3)">
+      <label>Ticket promedio</label>
+      <div class="value" style="font-size:26px;color:var(--accent)">$745K</div>
+      <div class="sub">ARS · por cita cobrada</div>
+    </div>
+    <div class="kpi" style="border-color:rgba(201,169,110,.3)">
+      <label>Medio principal</label>
+      <div class="value" style="font-size:22px;color:var(--accent)">Transfer.</div>
+      <div class="sub"><b>33.1%</b> · $62.5M ARS</div>
+    </div>
+    <div class="kpi red" style="">
+      <label>Revenue perdido (caída)</label>
+      <div class="value" style="font-size:26px;color:var(--red)">~$76.8M</div>
+      <div class="sub">103 citas × ticket prom. estimado</div>
+    </div>
+  </div>
+
+  <!-- Row 1: Funnel + Semanas -->
+  <div class="row col21">
+    <!-- Funnel -->
+    <div class="card">
+      <h2>Embudo de conversión <em>· Mayo 2026</em></h2>
+      <div class="funnel">
+
+        <div class="funnel-step">
+          <div class="funnel-label">Agendadas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:100%;background:linear-gradient(90deg,#c9a96e,#e8c98a);color:#0f0f13">453</div>
+          </div>
+          <div class="funnel-pct" style="color:var(--accent)">100%</div>
+          <div class="funnel-drop"></div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-label">Atendidas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:77.3%;background:linear-gradient(90deg,#4a9e74,#5cba8a);color:#0f0f13">350</div>
+          </div>
+          <div class="funnel-pct" style="color:var(--green)">77.3%</div>
+          <div class="funnel-drop">▼ −103</div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-label">Cobradas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:55.9%;background:linear-gradient(90deg,#3a6ab8,#5c8ae0);color:#fff">253</div>
+          </div>
+          <div class="funnel-pct" style="color:var(--blue)">55.9%</div>
+          <div class="funnel-drop">▼ −97</div>
+        </div>
+
+        <div class="funnel-step">
+          <div class="funnel-label">Cobr. + Plan</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="width:59.8%;background:linear-gradient(90deg,#6a4ab8,#9b72cf);color:#fff">271</div>
+          </div>
+          <div class="funnel-pct" style="color:var(--purple)">59.8%</div>
+          <div class="funnel-drop"></div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:20px">
+        <div class="insight red">
+          <strong>Bache de cobro:</strong> de 350 atendidas, solo 271 tienen pago registrado (77%). Hay 79 atendidas sin cobro documentado — es el foco más urgente.
+        </div>
+        <div class="insight red">
+          <strong>22.7% de la agenda se pierde</strong> antes de la consulta. Con 453 citas/mes y un ticket medio estimado de $50K–$80K, son entre $5M–$8M ARS/mes en riesgo de caída.
+        </div>
+        <div class="insight">
+          <strong>Sin precio en este dataset:</strong> la columna Venta_id existe pero no el importe. Cruzar con el módulo de ventas es el paso 1 para calcular revenue real.
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado pago breakdown -->
+    <div class="card">
+      <h2>Estado de pago</h2>
+      <div style="position:relative;height:220px">
+        <canvas id="chartPago"></canvas>
+      </div>
+      <div style="margin-top:16px">
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--green)"></div>
+          <div class="ret-label">Pagado</div>
+          <div class="ret-val">253</div>
+          <div class="ret-pct">55.8%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--red)"></div>
+          <div class="ret-label">No Pagado</div>
+          <div class="ret-val">102</div>
+          <div class="ret-pct">22.5%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--text2)"></div>
+          <div class="ret-label">Descartado</div>
+          <div class="ret-val">80</div>
+          <div class="ret-pct">17.7%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--purple)"></div>
+          <div class="ret-label">Plan</div>
+          <div class="ret-val">18</div>
+          <div class="ret-pct">4.0%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Profesionales + Semanas -->
+  <div class="row col2">
+    <!-- Profesionales -->
+    <div class="card">
+      <h2>Profesionales <em>· rendimiento y caídas</em></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Profesional</th>
+            <th>Citas</th>
+            <th>Atendidas</th>
+            <th>% Problemas</th>
+            <th>Sin cobro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Dra. Denisse Rubio</strong></td>
+            <td>208 <span class="badge y">46%</span></td>
+            <td>167</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:19.7%;background:var(--accent)"></div></div>
+                <span style="color:var(--accent)">19.7%</span>
+              </div>
+            </td>
+            <td><span class="badge r">34</span></td>
+          </tr>
+          <tr>
+            <td><strong>Ctra. Arelis Moreno</strong></td>
+            <td>90</td>
+            <td>66</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:26.7%;background:var(--red)"></div></div>
+                <span style="color:var(--red)">26.7%</span>
+              </div>
+            </td>
+            <td><span class="badge r">28</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dra. Rose Lima</strong></td>
+            <td>81</td>
+            <td>62</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:23.5%;background:var(--red)"></div></div>
+                <span style="color:var(--red)">23.5%</span>
+              </div>
+            </td>
+            <td><span class="badge r">22</span></td>
+          </tr>
+          <tr>
+            <td><strong>Dra. Gabriela Moreno</strong></td>
+            <td>47</td>
+            <td>32</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:31.9%;background:var(--red)"></div></div>
+                <span style="color:var(--red);font-weight:700">31.9%</span>
+              </div>
+            </td>
+            <td><span class="badge r">13</span></td>
+          </tr>
+          <tr>
+            <td>Dr. Martin Milani</td>
+            <td>7</td>
+            <td>6</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:14.3%;background:var(--accent)"></div></div>
+                <span style="color:var(--accent)">14.3%</span>
+              </div>
+            </td>
+            <td><span class="badge y">1</span></td>
+          </tr>
+          <tr>
+            <td>Lic. Camila De Nicola</td>
+            <td>11</td>
+            <td>10</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:9.1%;background:var(--green)"></div></div>
+                <span style="color:var(--green)">9.1%</span>
+              </div>
+            </td>
+            <td><span class="badge g">1</span></td>
+          </tr>
+          <tr>
+            <td>Dra. Ana Mesa</td>
+            <td>6</td>
+            <td>6</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="bar-mini" style="width:80px"><div class="bar-mini-fill" style="width:0%;background:var(--green)"></div></div>
+                <span style="color:var(--green)">0%</span>
+              </div>
+            </td>
+            <td><span class="badge g">0</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:16px">
+        <div class="insight red">
+          <strong>Riesgo de concentración:</strong> Dra. Rubio tiene el 46% de la agenda. Si no trabaja un día, el consultorio cae a la mitad.
+        </div>
+        <div class="insight">
+          <strong>Dra. G. Moreno</strong> tiene la tasa de problemas más alta (32%). Vale la pena revisar si es perfil de paciente o proceso de confirmación.
+        </div>
+      </div>
+    </div>
+
+    <!-- Citas por semana + Revenue -->
+    <div class="card">
+      <h2>Citas vs Revenue por semana <em>· Mayo 2026</em></h2>
+      <div style="height:220px">
+        <canvas id="chartSemanas"></canvas>
+      </div>
+      <div style="margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;text-align:center">
+        <div style="background:var(--surface2);border-radius:6px;padding:8px">
+          <div style="font-size:10px;color:var(--text2)">Sem 18</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent)">$6.6M</div>
+          <div style="font-size:10px;color:var(--text2)">~$389K/cita</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:8px">
+          <div style="font-size:10px;color:var(--text2)">Sem 19</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent)">$52M</div>
+          <div style="font-size:10px;color:var(--text2)">~$473K/cita</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:8px">
+          <div style="font-size:10px;color:var(--text2)">Sem 20</div>
+          <div style="font-size:12px;font-weight:700;color:var(--green)">$42.6M</div>
+          <div style="font-size:10px;color:var(--green);font-weight:700">~$676K/cita ↑</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:8px">
+          <div style="font-size:10px;color:var(--text2)">Sem 21</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent)">$54.5M</div>
+          <div style="font-size:10px;color:var(--text2)">~$535K/cita</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:8px">
+          <div style="font-size:10px;color:var(--text2)">Sem 22</div>
+          <div style="font-size:12px;font-weight:700;color:var(--accent)">$33M</div>
+          <div style="font-size:10px;color:var(--text2)">~$568K/cita</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="insight green">
+          <strong>Semana 20 tiene el ticket más alto ($676K)</strong> con menos citas (81). Probablemente mix de tratamientos más complejos — Sculptra, Laser CO2. Menos volumen, más valor.
+        </div>
+        <div class="insight">
+          <strong>Semana 18 muy baja ($389K ticket)</strong> — inicio de mes con consultas y procedimientos simples. El patrón sugiere que los tratamientos de mayor valor se concentran a mitad de mes.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Tratamientos + Canales + Perfil -->
+  <div class="row col3">
+    <!-- Tratamientos -->
+    <div class="card">
+      <h2>Top tratamientos</h2>
+      <div style="height:280px">
+        <canvas id="chartTratos"></canvas>
+      </div>
+    </div>
+
+    <!-- Canal de captación -->
+    <div class="card">
+      <h2>Canal de captación <em>· donde hay dato</em></h2>
+      <div style="height:200px;position:relative" class="chart-wrap">
+        <canvas id="chartCanal"></canvas>
+        <div class="chart-center">
+          <div class="big" style="color:var(--accent)">153</div>
+          <div class="small">con referencia</div>
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="ret-row">
+          <div class="ret-dot" style="background:#E1306C"></div>
+          <div class="ret-label">Instagram</div>
+          <div class="ret-val">109</div>
+          <div class="ret-pct" style="color:var(--accent);font-weight:700">71.2%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:#4285F4"></div>
+          <div class="ret-label">Google Ads</div>
+          <div class="ret-val">14</div>
+          <div class="ret-pct">9.2%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--text2)"></div>
+          <div class="ret-label">Otro</div>
+          <div class="ret-val">10</div>
+          <div class="ret-pct">6.5%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:var(--green)"></div>
+          <div class="ret-label">Otro Paciente</div>
+          <div class="ret-val">9</div>
+          <div class="ret-pct">5.9%</div>
+        </div>
+        <div class="ret-row">
+          <div class="ret-dot" style="background:#1877F2"></div>
+          <div class="ret-label">Facebook</div>
+          <div class="ret-val">5</div>
+          <div class="ret-pct">3.3%</div>
+        </div>
+      </div>
+      <div class="insight red" style="margin-top:12px">
+        <strong>300 citas sin referencia cargada</strong> (66%). El análisis de canal real es imposible con este nivel de completitud.
+      </div>
+    </div>
+
+    <!-- Perfil paciente -->
+    <div class="card">
+      <h2>Perfil del paciente</h2>
+
+      <!-- Sexo donut -->
+      <div style="position:relative;height:140px" class="chart-wrap">
+        <canvas id="chartSexo"></canvas>
+        <div class="chart-center">
+          <div class="big" style="color:var(--purple);font-size:22px">77%</div>
+          <div class="small">Femenino</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;gap:16px;justify-content:center">
+        <div class="ret-row" style="margin:0">
+          <div class="ret-dot" style="background:var(--purple)"></div>
+          <div class="ret-label">Femenino</div>
+          <div class="ret-val">351</div>
+        </div>
+        <div class="ret-row" style="margin:0">
+          <div class="ret-dot" style="background:var(--blue)"></div>
+          <div class="ret-label">Masculino</div>
+          <div class="ret-val">62</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);margin:14px 0"></div>
+
+      <h2 style="margin-bottom:12px">Retención · mismo mes</h2>
+      <div class="ret-row">
+        <div class="ret-dot" style="background:var(--text2)"></div>
+        <div class="ret-label">Solo 1 cita</div>
+        <div class="ret-val">141</div>
+        <div class="ret-pct">56%</div>
+      </div>
+      <div class="ret-row">
+        <div class="ret-dot" style="background:var(--accent)"></div>
+        <div class="ret-label">2 citas</div>
+        <div class="ret-val">59</div>
+        <div class="ret-pct">23%</div>
+      </div>
+      <div class="ret-row">
+        <div class="ret-dot" style="background:var(--green)"></div>
+        <div class="ret-label">3 o más citas</div>
+        <div class="ret-val">52</div>
+        <div class="ret-pct">21%</div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);margin:14px 0"></div>
+
+      <h2 style="margin-bottom:12px">Booking online vs presencial</h2>
+      <div class="ret-row">
+        <div class="ret-dot" style="background:var(--text2)"></div>
+        <div class="ret-label">Agendado manual</div>
+        <div class="ret-val">416</div>
+        <div class="ret-pct">91.8%</div>
+      </div>
+      <div class="ret-row">
+        <div class="ret-dot" style="background:var(--blue)"></div>
+        <div class="ret-label">Online</div>
+        <div class="ret-val">37</div>
+        <div class="ret-pct" style="color:var(--blue)">8.2%</div>
+      </div>
+      <div class="insight" style="margin-top:10px">
+        <strong>8% online</strong> es muy bajo para una clínica que tiene perfil digital. Gran oportunidad de automatización.
+      </div>
+    </div>
+  </div>
+
+  <!-- Row: Revenue breakdown -->
+  <div class="row col2" style="margin-bottom:20px">
+
+    <!-- Medios de pago -->
+    <div class="card">
+      <h2>Medios de pago <em>· Mayo 2026</em></h2>
+      <div style="height:200px">
+        <canvas id="chartMedios"></canvas>
+      </div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div class="ret-row"><div class="ret-dot" style="background:var(--accent)"></div><div class="ret-label">Transferencia</div><div class="ret-val" style="font-size:12px">$62.5M</div><div class="ret-pct">33.1%</div></div>
+        <div class="ret-row"><div class="ret-dot" style="background:var(--green)"></div><div class="ret-label">Efectivo</div><div class="ret-val" style="font-size:12px">$33.6M</div><div class="ret-pct">17.8%</div></div>
+        <div class="ret-row"><div class="ret-dot" style="background:var(--blue)"></div><div class="ret-label">Tarjeta Crédito</div><div class="ret-val" style="font-size:12px">$31M</div><div class="ret-pct">16.4%</div></div>
+        <div class="ret-row"><div class="ret-dot" style="background:var(--purple)"></div><div class="ret-label">Pago Online</div><div class="ret-val" style="font-size:12px">$26.7M</div><div class="ret-pct">14.2%</div></div>
+        <div class="ret-row"><div class="ret-dot" style="background:var(--text2)"></div><div class="ret-label">Dólar</div><div class="ret-val" style="font-size:12px">$5.5M</div><div class="ret-pct">2.9%</div></div>
+        <div class="ret-row"><div class="ret-dot" style="background:#3a3a50"></div><div class="ret-label">Débito</div><div class="ret-val" style="font-size:12px">$0.6M</div><div class="ret-pct">0.3%</div></div>
+      </div>
+      <div class="insight" style="margin-top:12px">
+        <strong>Transferencia domina (33%)</strong> — junto con efectivo suman el 51% del revenue. Bajo riesgo de chargebacks pero difícil de rastrear si no hay conciliación bancaria sistemática.
+      </div>
+    </div>
+
+    <!-- Dra. Denisse Rubio breakdown -->
+    <div class="card">
+      <h2>Dra. Denisse Rubio <em>· breakdown completo</em></h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Citas totales</div>
+          <div style="font-size:28px;font-weight:700;color:var(--accent)">208</div>
+          <div style="font-size:11px;color:var(--text2)">46% de la agenda</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:11px;color:var(--text2);margin-bottom:4px">Revenue estimado</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)">~$91M</div>
+          <div style="font-size:11px;color:var(--text2)">ARS · 48% del mes</div>
+        </div>
+      </div>
+      <h2 style="margin-bottom:10px">Estado de las 208 citas</h2>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--green)"></div><div class="ret-label">Atendida</div><div class="ret-val">167</div><div class="ret-pct" style="color:var(--green)">80.3%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--accent)"></div><div class="ret-label">Suspendió (paciente)</div><div class="ret-val">19</div><div class="ret-pct">9.1%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--red)"></div><div class="ret-label">No Pagó</div><div class="ret-val">11</div><div class="ret-pct" style="color:var(--red)">5.3%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--text2)"></div><div class="ret-label">Eliminado</div><div class="ret-val">8</div><div class="ret-pct">3.8%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--red)"></div><div class="ret-label">No llegó</div><div class="ret-val">3</div><div class="ret-pct">1.4%</div></div>
+      <div style="border-top:1px solid var(--border);margin:12px 0"></div>
+      <h2 style="margin-bottom:10px">Estado de cobro (167 atendidas)</h2>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--green)"></div><div class="ret-label">Pagado</div><div class="ret-val">122</div><div class="ret-pct" style="color:var(--green)">73%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--red)"></div><div class="ret-label">No Pagado (atendidas)</div><div class="ret-val">34</div><div class="ret-pct" style="color:var(--red)">20%</div></div>
+      <div class="ret-row"><div class="ret-dot" style="background:var(--text2)"></div><div class="ret-label">Descartado</div><div class="ret-val">52</div><div class="ret-pct">—</div></div>
+      <div class="insight red" style="margin-top:12px">
+        <strong>34 citas atendidas sin cobro registrado</strong> — son $25.4M ARS estimados en deuda o sin registrar. Es el problema de cobranza más grande del consultorio.
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Oportunidades -->
+  <div class="row">
+    <div class="card">
+      <h2>Oportunidades identificadas <em>· para análisis comercial</em></h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px">
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--red);font-weight:600;margin-bottom:8px">🔴 Urgente</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>79 atendidas sin cobro</strong> documentado. Cruzar con módulo de ventas para identificar si es problema de carga o deuda real. Impacto directo en facturación.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);font-weight:600;margin-bottom:8px">🟡 Cancelaciones del paciente</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>22.7% de caída de agenda confirmada como cancelaciones del paciente</strong> (no del consultorio). El foco está en reducir el abandono previo a la cita: confirmar turno 24–48hs antes por WhatsApp y medir si la tasa baja el mes siguiente.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--purple);font-weight:600;margin-bottom:8px">🧪 Experimento · Controles opcionales</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>Propuesta para BeautyDerm:</strong> hacer que la cita de control post-tratamiento sea opcional en lugar de automática. Medir cuántos pacientes la agendan igual por iniciativa propia y si las cancelaciones de control disminuyen el mes siguiente. Si la tasa de cancelación de controles baja al hacerlos optativos, se libera agenda sin perder adherencia real al tratamiento.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--green);font-weight:600;margin-bottom:8px">🟢 Canal · completitud de datos</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>Instagram = 71% del canal</strong> con referencia cargada. Pero el campo está vacío en 66% de los casos. Exigir referencia al agendar daría inteligencia de marketing real en 2 meses.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--blue);font-weight:600;margin-bottom:8px">📊 Revenue mix</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>Cruzar con módulo de ventas</strong> para obtener ticket por tratamiento. Sculptra y Laser CO2 tienen bajo volumen pero probablemente alto ticket — conocer el revenue mix cambia la estrategia de agenda.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--purple);font-weight:600;margin-bottom:8px">👤 Retención</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>141 pacientes vinieron 1 sola vez</strong> este mes. ¿Cuántos de esos son nuevos vs pacientes que dejaron de volver? Historial de meses anteriores respondería cuál es la tasa de abandono real.
+          </p>
+        </div>
+
+        <div style="background:var(--surface2);border-radius:8px;padding:14px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);font-weight:600;margin-bottom:8px">⚡ Quick Win · Booking online</div>
+          <p style="font-size:12px;line-height:1.6;color:var(--text)">
+            <strong>Booking online al 8%.</strong> Consultorio con presencia digital activa debería estar en 30–40%. Activar la agenda online con link directo desde Instagram stories reduciría carga operativa y captaría nuevos pacientes fuera del horario de atención.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>BeautyDerm · Dashboard generado con datos de mayo 2026 · Generado el 16/06/2026</footer>
+
+<div style="background:var(--surface);border-top:1px solid var(--border);padding:20px 32px;max-width:1400px;margin:0 auto">
+  <div style="display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap">
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:6px">Fuentes de datos</div>
+      <div style="font-size:13px;color:var(--text)">📄 <strong>citas.xls</strong> — export agenda BeautyDerm</div>
+      <div style="font-size:13px;color:var(--text);margin-top:4px">📄 <strong>resumen_de_ventas.xls</strong> — export facturación BeautyDerm</div>
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:6px">Período analizado</div>
+      <div style="font-size:13px;color:var(--text)">📅 <strong>Mayo 2026</strong> — del 2 al 30 de mayo (453 registros)</div>
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:6px">Tema</div>
+      <div style="font-size:13px;color:var(--text)">🗂️ <strong>CITAS</strong> — gestión de agenda, cancelaciones, cobros y captación de pacientes</div>
+    </div>
+    <div>
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:6px">Sucursal</div>
+      <div style="font-size:13px;color:var(--text)">📍 <strong>BeautyDerm</strong> · única sucursal</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const C = (id) => document.getElementById(id).getContext('2d');
+const gold = '#c9a96e', green = '#5cba8a', red = '#e05c6a', blue = '#5c8ae0', purple = '#9b72cf', gray = '#9090a8';
+
+// Pago donut
+new Chart(C('chartPago'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Pagado', 'No Pagado', 'Descartado', 'Plan'],
+    datasets: [{
+      data: [253, 102, 80, 18],
+      backgroundColor: [green, red, '#3a3a50', purple],
+      borderColor: '#17171f', borderWidth: 3
+    }]
+  },
+  options: {
+    cutout: '72%', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Semanas
+new Chart(C('chartSemanas'), {
+  type: 'bar',
+  data: {
+    labels: ['Sem 18\n(28 abr–4 may)', 'Sem 19\n(5–11 may)', 'Sem 20\n(12–18 may)', 'Sem 21\n(19–25 may)', 'Sem 22\n(26–30 may)'],
+    datasets: [{
+      label: 'Citas',
+      data: [24, 140, 81, 127, 81],
+      backgroundColor: ['rgba(201,169,110,.4)','rgba(201,169,110,.9)','rgba(201,169,110,.5)','rgba(201,169,110,.85)','rgba(201,169,110,.5)'],
+      borderColor: gold, borderWidth: 1, borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#2a2a38' }, ticks: { color: '#9090a8', font: { size: 10 } } },
+      y: { grid: { color: '#2a2a38' }, ticks: { color: '#9090a8' } }
+    }
+  }
+});
+
+// Tratamientos horizontal bar
+new Chart(C('chartTratos'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Toxina Bot. - Control','Toxina Bot. - Tercio Sup.','Aumento de Labios',
+      'Consulta Médica Facial','Limpieza Facial Profunda','Aum. Labios - Control',
+      'Sculptra - 1 vial','Laser CO2 Cool Peel','Relleno Ojeras',
+      'Sculptra - Control','Aum. Labios - Control','Profhilo'
+    ],
+    datasets: [{
+      label: 'Citas',
+      data: [46, 36, 32, 28, 25, 19, 16, 14, 13, 11, 11, 10],
+      backgroundColor: [
+        'rgba(201,169,110,.9)','rgba(201,169,110,.8)','rgba(201,169,110,.7)',
+        'rgba(92,138,224,.7)','rgba(92,138,224,.6)','rgba(201,169,110,.6)',
+        'rgba(155,114,207,.7)','rgba(155,114,207,.6)','rgba(92,186,138,.6)',
+        'rgba(155,114,207,.5)','rgba(201,169,110,.5)','rgba(92,186,138,.5)'
+      ],
+      borderRadius: 3, borderWidth: 0
+    }]
+  },
+  options: {
+    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: '#2a2a38' }, ticks: { color: '#9090a8' } },
+      y: { grid: { display: false }, ticks: { color: '#e8e8f0', font: { size: 11 } } }
+    }
+  }
+});
+
+// Canal donut
+new Chart(C('chartCanal'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Instagram', 'Google Ads', 'Otro', 'Otro Paciente', 'Facebook', 'Otros'],
+    datasets: [{
+      data: [109, 14, 10, 9, 5, 6],
+      backgroundColor: ['#E1306C', '#4285F4', '#3a3a50', green, '#1877F2', gray],
+      borderColor: '#17171f', borderWidth: 3
+    }]
+  },
+  options: {
+    cutout: '65%', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Medios de pago
+new Chart(C('chartMedios'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Transferencia', 'Efectivo', 'Tarjeta Crédito', 'Pago Online', 'Dólar', 'Débito'],
+    datasets: [{
+      data: [62463958, 33597400, 30984400, 26738076, 5512780, 630800],
+      backgroundColor: [gold, green, blue, purple, gray, '#3a3a50'],
+      borderColor: '#17171f', borderWidth: 3
+    }]
+  },
+  options: {
+    cutout: '65%', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+
+// Sexo donut
+new Chart(C('chartSexo'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Femenino', 'Masculino', 'No especifica'],
+    datasets: [{
+      data: [351, 62, 33],
+      backgroundColor: [purple, blue, '#3a3a50'],
+      borderColor: '#17171f', borderWidth: 3
+    }]
+  },
+  options: {
+    cutout: '68%', responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } }
+  }
+});
+</script>
+</body>
+</html>
