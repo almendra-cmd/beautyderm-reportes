@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BEAUTYDERM · Fase 1 · Diagnóstico</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #F7F4EF; font-family: 'Georgia', 'Times New Roman', serif; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #EDE9E2; }
+    ::-webkit-scrollbar-thumb { background: #C8BFB0; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    /* ── Paleta ──────────────────────────────────────────── */
+    const T = {
+      bg:       "#F7F4EF",
+      surface:  "#FFFFFF",
+      surface2: "#F2EEE7",
+      border:   "#E4DDD2",
+      text:     "#2E2A25",
+      text2:    "#7A7269",
+      muted:    "#B5ADA2",
+    };
+
+    const data = {
+      meta: {
+        title: "BEAUTYDERM",
+        subtitle: "Guía de Diagnóstico · Fase 1 · Manager de Centro",
+        weeks: 4,
+      },
+      areas: [
+        {
+          id: "ops",
+          label: "OPERACIONES",
+          color: "#B8763A",
+          light: "#FDF5EC",
+          border: "#F0D9B8",
+          icon: "◈",
+          semanas: [
+            {
+              semana: 1,
+              foco: "Observación total — no intervenir, solo mapear",
+              items: [
+                "Recorrer el centro completo: recepción, salas, depósito, baños",
+                "Registrar horarios reales vs. horarios declarados del personal",
+                "Detectar quién hace qué de facto (no lo que dice el organigrama)",
+                "Identificar cuellos de botella en la agenda de turnos",
+                "Observar el recorrido del paciente de entrada a salida",
+                "Notar qué se improvisa y qué tiene protocolo escrito",
+              ],
+            },
+            {
+              semana: 2,
+              foco: "Primera auditoría de procesos internos",
+              items: [
+                "Documentar el flujo actual de atención al paciente paso a paso",
+                "Revisar planillas de asistencia y puntualidad del último mes",
+                "Entender el esquema de comisiones actual: cómo se calcula, quién audita",
+                "Mapear los canales de comunicación interna (WhatsApp, mail, presencial)",
+                "Identificar ausencias frecuentes y cómo se resuelven",
+                "Revisar estándares de imagen y uniformidad del equipo",
+              ],
+            },
+            {
+              semana: 3,
+              foco: "Diagnóstico de fricción y oportunidades",
+              items: [
+                "Cruzar observación S1 con auditoría S2: dónde está la brecha",
+                "Listar los 3 procesos más urgentes a optimizar",
+                "Detectar conflictos o dinámicas tóxicas dentro del equipo",
+                "Evaluar si el espacio físico acompaña la operación o la traba",
+                "Revisar protocolo de post-atención: ¿existe seguimiento al paciente?",
+              ],
+            },
+            {
+              semana: 4,
+              foco: "Primeras propuestas de mejora concretas",
+              items: [
+                "Diseñar propuesta de optimización de turnos/horarios",
+                "Armar o revisar esquema de comisiones con criterios claros",
+                "Definir estándares de imagen por escrito si no existen",
+                "Primera reunión de equipo: presentación, alineación, feedback",
+                "Cierre de diagnóstico Fase 1 → entregable para Beautyderm",
+              ],
+            },
+          ],
+        },
+        {
+          id: "ventas",
+          label: "VENTAS",
+          color: "#3D826A",
+          light: "#EEF7F3",
+          border: "#B8DDD1",
+          icon: "◆",
+          semanas: [
+            {
+              semana: 1,
+              foco: "Entender quién vende y cómo vende hoy",
+              items: [
+                "¿Quién es el equipo de ventas? ¿Recepcionistas, médicos, ambos?",
+                "¿Existe un speech de ventas o cada uno improvisa?",
+                "Observar una consulta real de punta a punta si es posible",
+                "¿Se hace venta consultiva o solo se informa precio?",
+                "¿Hay manejo de objeciones? ¿Cuál es el más frecuente?",
+              ],
+            },
+            {
+              semana: 2,
+              foco: "Diagnóstico de métricas de ventas",
+              items: [
+                "Ticket promedio actual vs. 2025 — ¿hay datos históricos?",
+                "¿Cuántos tratamientos se venden por día / por semana?",
+                "¿Cuál es la tasa de conversión consulta → compra?",
+                "¿Qué tratamientos generan más revenue? ¿Y más volumen?",
+                "¿Hay tratamientos que se venden solos y cuáles necesitan empuje?",
+                "Mapear el portfolio completo de tratamientos del centro",
+              ],
+            },
+            {
+              semana: 3,
+              foco: "Capacidad del equipo y gaps de formación",
+              items: [
+                "¿El equipo sabe argumentar los tratamientos del centro con seguridad?",
+                "¿Conocen la diferencia competitiva de Beautyderm vs. otras clínicas?",
+                "¿Hay capacitaciones en curso o previas? ¿Qué cubrieron?",
+                "Evaluar si el speech actual comunica valor o solo precio",
+                "¿Se hace seguimiento post-consulta a los que no compraron?",
+              ],
+            },
+            {
+              semana: 4,
+              foco: "Plan de acción comercial inicial",
+              items: [
+                "Definir objetivo de ticket promedio para Etapa 2",
+                "Proponer estructura de seguimiento a pacientes (sin ser spam)",
+                "Armar primeros lineamientos de speech consultivo",
+                "Detectar si se necesita automatización: ¿qué app? ¿para qué?",
+                "¿Cuáles son los tratamientos a potenciar vs. desprender?",
+              ],
+            },
+          ],
+        },
+        {
+          id: "mkt",
+          label: "MARKETING",
+          color: "#6B5A9E",
+          light: "#F3F0FB",
+          border: "#CFC5ED",
+          icon: "◉",
+          semanas: [
+            {
+              semana: 1,
+              foco: "Audit de presencia actual",
+              items: [
+                "¿Tienen Instagram activo? ¿Qué publican y con qué frecuencia?",
+                "¿Hay Google Ads corriendo? ¿Quién los gestiona?",
+                "¿Existe Google Business Profile y está optimizado?",
+                "¿Tienen base de datos de pacientes segmentada?",
+                "¿Cómo llegan los pacientes nuevos hoy? ¿Por dónde?",
+              ],
+            },
+            {
+              semana: 2,
+              foco: "Comunidad y posicionamiento",
+              items: [
+                "¿Beautyderm tiene identidad de marca clara? ¿La comunica?",
+                "¿Cuál es el diferencial que ellos mismos declaran?",
+                "¿Hay contenido educativo o solo promocional?",
+                "¿Se comunican los tratamientos como autoridad médica o solo como servicio?",
+                "¿Qué dice la competencia directa en RRSS?",
+              ],
+            },
+            {
+              semana: 3,
+              foco: "Detección de oportunidades de contenido",
+              items: [
+                "Día a día en la clínica como contenido auténtico",
+                "Tratamientos del centro → contenido educativo de valor",
+                "Experiencia del paciente como prueba social",
+                "¿Se puede mostrar el proceso? ¿Tienen restricciones médicas?",
+                "Identificar referentes de la industria estética en AR",
+              ],
+            },
+            {
+              semana: 4,
+              foco: "Primeras propuestas de MKT",
+              items: [
+                "Proponer calendario de contenido mínimo viable para Etapa 2",
+                "¿Tiene sentido activar campañas pagas ahora o después?",
+                "Definir si el KTM actual necesita ajuste de audiencia",
+                "Mentalidad de crecimiento: atentos a tendencias del sector",
+              ],
+            },
+          ],
+        },
+        {
+          id: "equipo",
+          label: "EQUIPO & LIDERAZGO",
+          color: "#A05252",
+          light: "#FBF0F0",
+          border: "#EAC0C0",
+          icon: "◎",
+          semanas: [
+            {
+              semana: 1,
+              foco: "Lectura del equipo sin juzgar",
+              items: [
+                "Observar dinámicas: quién lidera informalmente, quién resiste",
+                "¿Cuál es el clima general? ¿Hay tensión, apatía, motivación?",
+                "¿Cuánto tiempo lleva cada persona en el centro?",
+                "¿Hay roles claros o todo se superpone?",
+                "Escuchar más que hablar — generar confianza antes de cambiar",
+              ],
+            },
+            {
+              semana: 2,
+              foco: "Mapa de talento y gaps",
+              items: [
+                "¿Quién tiene potencial de crecimiento no explotado?",
+                "¿Quién necesita capacitación urgente vs. quién ya tiene base?",
+                "¿Hay perfiles que frenan al equipo o generan conflicto?",
+                "¿El staff conoce y sabe explicar todos los tratamientos del centro?",
+                "¿Se sienten parte de algo o solo cumplen función?",
+              ],
+            },
+            {
+              semana: 3,
+              foco: "Mentalidad de crecimiento — diagnóstico",
+              items: [
+                "¿El equipo tiene apertura a aprender algo nuevo?",
+                "¿Cómo reaccionan ante el feedback? ¿Lo buscan o lo evitan?",
+                "¿Hay espacio para proponer mejoras o está todo cerrado?",
+                "Evaluar si la cultura actual acompaña o frena el crecimiento",
+                "Detectar quiénes son los early adopters del cambio",
+              ],
+            },
+            {
+              semana: 4,
+              foco: "Primeras acciones de liderazgo",
+              items: [
+                "Proponer desafíos diarios pequeños que estimulen crecimiento",
+                "Primera ronda de feedback individual 1:1",
+                "Definir perfil de reunión de equipo semanal: formato, duración, agenda",
+                "Motivar → Incentivar → Capacitar: secuencia, no simultáneo",
+                "Medir el pulso del equipo al cierre de Fase 1",
+              ],
+            },
+          ],
+        },
+        {
+          id: "metricas",
+          label: "MÉTRICAS & DATOS",
+          color: "#3B6F9E",
+          light: "#EEF4FB",
+          border: "#B5CFE8",
+          icon: "◇",
+          semanas: [
+            {
+              semana: 1,
+              foco: "Inventario de datos disponibles",
+              items: [
+                "¿Qué sistema de gestión usan? ¿Tiene reportes nativos?",
+                "¿Hay datos históricos de facturación? ¿Desde cuándo?",
+                "¿Se registra el origen de los pacientes (cómo llegaron)?",
+                "¿Qué se mide hoy? ¿Qué no se mide y debería?",
+                "¿Hay app de automatización activa o todo es manual?",
+              ],
+            },
+            {
+              semana: 2,
+              foco: "KPIs base a definir",
+              items: [
+                "Ticket promedio mensual (histórico y actual)",
+                "Cantidad de turnos por día / semana / mes",
+                "Tasa de conversión consulta → venta",
+                "Tasa de retorno de pacientes (fidelización)",
+                "% de ocupación de agenda disponible",
+              ],
+            },
+            {
+              semana: 3,
+              foco: "Benchmark y objetivos",
+              items: [
+                "Comparar ticket promedio 2025 vs. objetivo 2026",
+                "¿Cuáles son los tratamientos con mejor margen?",
+                "¿Cuáles están en caída? ¿Conviene desprenderse?",
+                "Identificar estacionalidad: ¿hay meses pico?",
+                "¿Qué mide la competencia que nosotros ignoramos?",
+              ],
+            },
+            {
+              semana: 4,
+              foco: "Dashboard inicial y frecuencia de medición",
+              items: [
+                "Definir qué se mide mensualmente y quién lo reporta",
+                "Proponer estructura de reporte simple para Beautyderm",
+                "¿Se pueden automatizar algunos reportes con la herramienta actual?",
+                "Objetivos concretos para Fase 2 basados en datos reales de Fase 1",
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const propuestas = [
+      {
+        id: "rrhh",
+        label: "RECURSOS HUMANOS",
+        color: "#B8763A",
+        light: "#FDF5EC",
+        border: "#F0D9B8",
+        icon: "◈",
+        intro: {
+          titulo: "El área existe aunque no tenga nombre propio",
+          texto: "Beautyderm no cuenta hoy con personal dedicado a Recursos Humanos, y eso es completamente válido para el tamaño y momento actual del centro. Pero el área existe — porque las necesidades están, porque el equipo tiene derechos y obligaciones, y porque la empresa opera en blanco y debe estar alineada con la ley. Lo que no puede existir es la informalidad como sistema. La ausencia de un área de RRHH no es excusa para la improvisación: es el argumento exacto para estandarizar y automatizar todo lo que se pueda. El objetivo es que los procesos funcionen sin depender de la memoria de nadie.",
+        },
+        secciones: [
+          {
+            titulo: "Infraestructura mínima",
+            estado: "BORRADOR",
+            items: [
+              { label: "Mail institucional de RRHH", detalle: "Crear rrhh@beautyderm.com.ar (o equivalente). Toda comunicación formal del personal pasa por ahí: envío de CVs, certificados médicos, solicitudes de vacaciones, pedidos de licencias. Genera trazabilidad, distancia profesional y una base de datos que crece sola." },
+              { label: "Fichaje digital con Sologic", detalle: "Implementar el sistema de fichaje para registro de entrada y salida. Exportación mensual automática de presentes, ausentes y tardanzas. Elimina el control manual y la subjetividad en el registro de asistencia." },
+              { label: "Reporte mensual de asistencia", detalle: "Definir quién lo revisa, cuándo y qué se hace con esa información. El reporte existe para tomar decisiones, no para acumular archivos." },
+            ],
+          },
+          {
+            titulo: "Política de ausentismo",
+            estado: "BORRADOR",
+            items: [
+              { label: "Certificados médicos", detalle: "Se acepta certificado de hospital público o médico particular. El certificado debe presentarse dentro de las 24 hs de la ausencia, vía mail a rrhh@beautyderm.com.ar. Ante sospecha de ausentismo injustificado reiterado, Beautyderm se reserva el derecho de enviar médico a domicilio." },
+              { label: "Ausencias sin aviso", detalle: "Toda ausencia debe notificarse antes del inicio del turno, por mail o WhatsApp al canal oficial del centro. La ausencia sin aviso es una falta grave y se registra como tal." },
+              { label: "Tardanzas", detalle: "Se define un margen de tolerancia de [X] minutos. Superado ese margen, se registra tardanza. Tres tardanzas en un mes equivalen a una ausencia a efectos del seguimiento interno." },
+            ],
+          },
+          {
+            titulo: "Política de vacaciones y licencias",
+            estado: "BORRADOR",
+            items: [
+              { label: "Vacaciones anuales", detalle: "Beautyderm otorga 15 días corridos de vacaciones anuales conforme a la ley. La solicitud debe realizarse con un mínimo de 30 días de anticipación, vía mail a rrhh@beautyderm.com.ar." },
+              { label: "Día de cumpleaños", detalle: "El personal tiene derecho a tomarse el día de su cumpleaños libre, con goce de sueldo. Debe notificarse con al menos 72 hs de anticipación." },
+              { label: "Licencia por mudanza", detalle: "Se otorga 1 día de licencia por mudanza, con goce de sueldo. Requiere notificación previa y, en caso de solicitarse, presentación de documentación." },
+              { label: "Otras licencias", detalle: "Cualquier situación no contemplada en esta política se evalúa caso a caso con la dirección del centro. La comunicación siempre inicia por mail a rrhh@beautyderm.com.ar." },
+            ],
+          },
+          {
+            titulo: "Búsqueda y selección de personal",
+            estado: "BORRADOR",
+            items: [
+              { label: "Canal único de recepción de CVs", detalle: "Toda búsqueda de personal se gestiona desde rrhh@beautyderm.com.ar. Los CVs recibidos se archivan en esa cuenta, generando una base de datos histórica de candidatos." },
+              { label: "Criterios de selección por rol", detalle: "A definir en Fase 2: perfil requerido, instancias de entrevista, criterios de evaluación y quién toma la decisión final." },
+            ],
+          },
+          {
+            titulo: "Cultura de la comunicación interna",
+            estado: "BORRADOR",
+            items: [
+              { label: "Fin de la cultura del pasillo", detalle: "Ninguna solicitud formal se gestiona de manera verbal en el momento. Toda comunicación formal va primero por escrito — mail o canal oficial — y luego, si es necesario, se conversa." },
+              { label: "Canal oficial interno", detalle: "Definir un canal único de comunicación interna operativa. Lo que va por ahí es información operativa del día. Lo formal va por mail." },
+            ],
+          },
+          {
+            titulo: "Sistema de documentación y consentimiento",
+            estado: "BORRADOR",
+            items: [
+              { label: "La firma como consenso, no como sanción", detalle: "Cada vez que un integrante del equipo firma un documento — recibo de normativa, notificación de estándares, acta de reunión, apercibimiento — no está siendo castigado: está dejando constancia de que conoce la regla." },
+              { label: "Qué habilita la documentación acumulada", detalle: "Un expediente bien construido no sirve solo para despedir. Sirve también para fundamentar por qué a una persona no se le otorga un aumento, por qué no se aplica flexibilidad con ella cuando con otra sí." },
+              { label: "Despido con causa: cuándo y cómo se construye", detalle: "El despido con causa en Argentina requiere que la causal sea suficientemente grave y debidamente acreditada. No se improvisa en el momento del conflicto: se construye a lo largo del tiempo con notificaciones firmadas, apercibimientos documentados." },
+              { label: "Documentos base a implementar desde Fase 1", detalle: "Recibo de entrega de normativa interna. Acta de notificación de incumplimiento. Apercibimiento formal. Acta de reunión con acuerdos. Todos van al mail de RRHH y al legajo físico o digital de la persona." },
+              { label: "El legajo como herramienta de gestión", detalle: "Cada persona del equipo tiene un legajo — digital, ordenado, accesible para la dirección. Contiene: datos personales y contrato, recibos de normativa firmados, historial de notificaciones si las hay." },
+              { label: "Dato mínimo obligatorio: DNI y domicilio real", detalle: "Desde el inicio del vínculo laboral, Beautyderm exige formalmente — y por escrito — el número de DNI y el domicilio real actualizado de cada integrante del equipo." },
+              { label: "Checklist de datos obligatorios al ingreso", detalle: "DNI (número y copia), domicilio real actualizado, teléfono personal, segundo teléfono de contacto, contacto de emergencia, CUIL, CBU, sindicato, obra social." },
+              { label: "Recibos de sueldo: firma, copia y legajo", detalle: "Cada recibo de sueldo debe ser firmado por el empleado como constancia de recepción. Beautyderm retiene la copia firmada, que va al legajo de la persona." },
+              { label: "Auditoría de Fase 1: ¿dónde está todo esto hoy?", detalle: "¿Existe un legajo físico o digital por persona? ¿Quién tiene acceso? ¿Hay recibos de sueldo firmados archivados? ¿Tiene Beautyderm los DNI y domicilios de todo el equipo registrados formalmente?" },
+            ],
+          },
+          {
+            titulo: "Sanciones progresivas",
+            estado: "BORRADOR",
+            items: [
+              { label: "El objetivo real: responsabilidad consciente", detalle: "El sistema de sanciones no existe para acumular papeles ni para intimidar. Existe para producir un efecto psicológico preciso: que la persona no pueda seguir sosteniendo que no sabía, que nadie le dijo, que siempre fue así." },
+              { label: "Principio: gradualidad antes que ruptura", detalle: "La sanción inmediata y extrema rara vez es la primera respuesta correcta. El sistema funciona cuando hay una escalera clara: primero se informa, luego se notifica formalmente, luego se apercibe." },
+              { label: "Nivel 1 · Señalamiento verbal con registro", detalle: "El evaluador autorizado señala el incumplimiento en el momento, nombra la norma específica, y deja registro interno de la situación — aunque no se firme nada aún." },
+              { label: "Nivel 2 · Notificación formal escrita", detalle: "Si el incumplimiento se repite o es relevante, se emite una notificación escrita describiendo el hecho, la norma incumplida y la fecha. La persona la firma como constancia de recepción." },
+              { label: "Nivel 3 · Apercibimiento", detalle: "Documento formal que indica que la conducta persiste pese a la notificación previa, y que una nueva reincidencia puede tener consecuencias más graves." },
+              { label: "Nivel 4 · Decisiones estructurales", detalle: "Con el expediente construido, la dirección tiene herramientas reales para tomar decisiones: suspensión, no renovación, cambio de condiciones, o desvinculación con causa justificada." },
+            ],
+          },
+        ],
+      },
+      {
+        id: "imagen",
+        label: "IMAGEN & ESTÁNDARES",
+        color: "#6B5A9E",
+        light: "#F3F0FB",
+        border: "#CFC5ED",
+        icon: "◉",
+        intro: {
+          titulo: "La imagen del equipo es parte del servicio",
+          texto: "Beautyderm es un centro médico estético. Cada persona que trabaja de cara al paciente es parte de la experiencia. La imagen del personal no es un detalle secundario: comunica los mismos valores que los tratamientos que ofrecemos — cuidado, precisión y profesionalismo.",
+        },
+        evaluadores: [
+          { nombre: "Abel", rol: "Dirección" },
+          { nombre: "Almendra", rol: "Manager de Centro" },
+          { nombre: "Denisse", rol: "Referente Operativo" },
+        ],
+        secciones: [
+          {
+            titulo: "Marco: estándares y política de premios",
+            estado: "BORRADOR",
+            items: [
+              { label: "El estándar es el piso, no el techo", detalle: "Los estándares de imagen son el mínimo exigible de la empresa, no una aspiración opcional. Cumplirlos no es mérito: es la condición de base para participar de cualquier política de incentivos." },
+              { label: "Evaluación en tiempo real, siempre con fundamento", detalle: "Las personas autorizadas para señalar un incumplimiento de imagen pueden hacerlo en cualquier momento del día. La única condición es que el señalamiento siempre vaya acompañado de la norma específica." },
+              { label: "El juego es limpio porque las reglas son claras", detalle: "Todos los estándares de esta sección son conocidos por el equipo desde el inicio. No hay sorpresas ni doble vara." },
+            ],
+          },
+          {
+            titulo: "Autoridades de evaluación",
+            estado: "BORRADOR",
+            items: [
+              { label: "Abel · Dirección", detalle: "Como director del centro, Abel tiene autoridad máxima para evaluar el cumplimiento de los estándares de imagen en cualquier momento de su presencia en el centro." },
+              { label: "Almendra · Manager de Centro", detalle: "Como manager de centro durante Fase 1, Almendra tiene autoridad para señalar incumplimientos en tiempo real, registrarlos y escalarlos si corresponde." },
+              { label: "Denisse · Referente Operativo", detalle: "Denisse forma parte del equipo de evaluación por su rol operativo dentro del centro. Puede señalar incumplimientos de imagen con el mismo criterio que los anteriores." },
+            ],
+          },
+          {
+            titulo: "Maquillaje",
+            estado: "BORRADOR",
+            items: [
+              { label: "Maquillaje mínimo obligatorio", detalle: "Base o BB cream, cubre ojeras, rubor y rímel. Estos cuatro productos constituyen el mínimo para el personal expuesto a pacientes durante el horario de atención." },
+              { label: "Criterio general de presentación", detalle: "El maquillaje debe verse cuidado y prolijo. No se define un estilo máximo ni una tendencia específica, pero sí se espera coherencia con el ambiente de un centro médico estético." },
+            ],
+          },
+          {
+            titulo: "Calzado",
+            estado: "BORRADOR",
+            items: [
+              { label: "Zapatos obligatorios todos los días", detalle: "El personal de atención al público debe usar zapatos durante todo el horario de atención. Se permiten taco alto y taco bajo. No se permiten zapatillas, ojotas, sandalias informales ni calzado deportivo." },
+            ],
+          },
+          {
+            titulo: "Ambiente del centro",
+            estado: "BORRADOR",
+            items: [
+              { label: "Uso de celular personal", detalle: "El celular personal no debe estar visible ni en uso durante la atención al paciente. Su uso queda restringido a momentos sin pacientes presentes." },
+              { label: "Música del centro", detalle: "La música del centro debe ser ambient o instrumental, acorde al perfil médico estético. No se reproduce música con letra durante el horario de atención." },
+            ],
+          },
+        ],
+      },
+    ];
+
+    const comunicaciones = [
+      {
+        id: "apertura",
+        label: "Apertura de Fase 1",
+        subtitulo: "Primera reunión de equipo · Presentación y alineamiento",
+        color: "#B8763A",
+        light: "#FDF5EC",
+        border: "#F0D9B8",
+        contexto: "Reunión presencial con todo el equipo. Primera vez que Almendra se presenta formalmente en su rol. Antes de arrancar con cualquier política o cambio, este es el momento de establecer el tono: honesto, directo, sin condescendencia.",
+        tono: "Directo · Humano · Sin promesas vacías",
+        texto: `Buenas. Voy a ser directa porque me parece que es la forma más respetuosa de arrancar.
+
+Vengo a ocupar un rol que va a generar cambios. No voy a decirles que todo estaba mal, porque no es así. Llegaron hasta acá, el centro funciona, hay pacientes que vuelven, hay un equipo que se bancó cosas. Eso tiene valor y lo reconozco.
+
+Lo que sí voy a decirles es que hay un techo. Y ese techo no existe porque les falte capacidad o porque no quieran — existe porque estamos muy acostumbrados a trabajar de una manera. Y cuando algo se vuelve hábito, deja de cuestionarse. Funciona hasta donde funciona, y ya.
+
+Lo que vamos a hacer en las próximas semanas es bastante simple en concepto: vamos a incorporar sistemas que ya existen, que ya están probados, que es cómo funcionan los negocios y las empresas cuando deciden crecer en serio. No estamos inventando nada. Estamos haciendo lo mínimo que corresponde.
+
+Y sí, al principio va a ser incómodo. Hay cosas que van a requerir práctica, que van a generar más pasos donde antes había uno solo, que van a pedir más atención o más esfuerzo. Eso es normal. No es señal de que estamos haciendo algo mal — es señal de que estamos cambiando algo real.
+
+En algún momento, todo lo que hoy les cuesta va a ser tan natural como lo que hacen ahora. Van a estar igual de cómodos, pero más profesionalizados. Y eso les hace bien a ustedes como individuos, no solo a la empresa.
+
+Mi compromiso es que nada de lo que se les pida sea arbitrario. Si hay un estándar, lo vamos a escribir. Si hay una expectativa, la vamos a declarar. El juego va a ser limpio porque las reglas van a ser claras para todos, incluida yo.
+
+Eso es todo por ahora. Después de hoy, las puertas están abiertas para preguntas. Pero por canal formal, no de pasillo — ya vamos a hablar de eso también.`,
+        notas: "Podés leerlo, parafrasearlo o usarlo como guía. Lo importante es que el tono sea tuyo — esto funciona cuando suena auténtico, no cuando suena a discurso preparado.",
+      },
+      {
+        id: "normativa",
+        label: "Bajada de normativa",
+        subtitulo: "Comunicación de nuevas políticas · Estándares e imagen",
+        color: "#6B5A9E",
+        light: "#F3F0FB",
+        border: "#CFC5ED",
+        contexto: "Reunión o comunicación escrita para presentar las políticas de imagen, RRHH u operativas. Se usa después de que Abel y la dirección aprobaron los estándares.",
+        tono: "Claro · Institucional · Sin ambigüedad",
+        texto: `A partir de hoy, Beautyderm cuenta con una serie de políticas internas formalizadas. Las van a recibir por escrito, las van a leer, y les vamos a pedir que las firmen como constancia de que las conocen.
+
+Firmar no significa que estén de acuerdo con cada punto — significa que los leyeron y que saben que aplican. A partir de esa firma, son las reglas del juego para todos.
+
+Estas políticas cubren estándares de imagen, comunicación interna, asistencia y algunos procesos operativos. No son caprichosas: tienen lógica, y si algo no queda claro, pueden preguntar. Pero pregunten antes de firmar, no después.
+
+El objetivo de tener todo esto por escrito es exactamente el mismo para ustedes que para nosotros: que no quede nada librado a la interpretación. Que sepan qué se espera, cuándo, y por qué. Que el trato sea parejo para todos.
+
+Cualquier cambio en estas políticas se va a comunicar con anticipación, también por escrito.`,
+        notas: "Este texto funciona para acompañar la entrega física de los documentos. Se puede adaptar para comunicación por mail si la bajada es escrita.",
+      },
+      {
+        id: "feedback",
+        label: "Feedback individual 1:1",
+        subtitulo: "Reunión de seguimiento personal · Primera ronda",
+        color: "#3D826A",
+        light: "#EEF7F3",
+        border: "#B8DDD1",
+        contexto: "Reunión individual con cada integrante del equipo al cierre de Fase 1. No es una evaluación formal — es la primera conversación real, cara a cara.",
+        tono: "Honesto · Privado · Sin juicio, con criterio",
+        texto: `Esta reunión es entre vos y yo, y lo que se diga acá queda acá salvo que decidamos lo contrario.
+
+Te cuento lo que observé en estas semanas: [espacio para lo específico de cada persona]. No vengo a sorprenderte — si algo de lo que digo te parece injusto o incorrecto, quiero escucharlo.
+
+También quiero saber cómo estás viendo vos todo esto. Qué te resulta difícil, qué creés que funciona, qué cambiarías si pudieras.
+
+No te voy a pedir que seas leal a mí. Te voy a pedir que seas leal al proyecto. Si algo no cierra, lo decimos. Si algo no funciona, lo ajustamos. Pero lo decimos acá, no en el pasillo.
+
+Lo que sí te voy a pedir es que todo lo que acordemos acá, lo sostengamos. Si te comprometo algo, te lo cumplo. Si vos te comprometés algo, lo necesito igual.`,
+        notas: "Dejar espacio real para que la persona hable. El objetivo de este 1:1 es escuchar tanto como hablar. No es el momento de comunicar sanciones ni normativa — eso va por otro canal.",
+      },
+    ];
+
+    const SEMANA_LABELS = ["Semana 1", "Semana 2", "Semana 3", "Semana 4"];
+
+    function App() {
+      const [mainTab, setMainTab] = useState("diagnostico");
+      const [activeArea, setActiveArea] = useState("ops");
+      const [activeSemana, setActiveSemana] = useState(0);
+      const [checked, setChecked] = useState({});
+      const [activePropuesta, setActivePropuesta] = useState("rrhh");
+      const [expandedItems, setExpandedItems] = useState({});
+      const [activeComunicacion, setActiveComunicacion] = useState("apertura");
+
+      const area = data.areas.find((a) => a.id === activeArea);
+      const semanaData = area.semanas[activeSemana];
+      const semanaKey = `${activeArea}-${activeSemana}`;
+
+      const toggleCheck = (idx) => {
+        const key = `${semanaKey}-${idx}`;
+        setChecked((prev) => ({ ...prev, [key]: !prev[key] }));
+      };
+
+      const toggleExpand = (key) => {
+        setExpandedItems((prev) => ({ ...prev, [key]: !prev[key] }));
+      };
+
+      const getProgress = (areaId, semanaIdx) => {
+        const a = data.areas.find((x) => x.id === areaId);
+        const items = a.semanas[semanaIdx].items;
+        const done = items.filter((_, i) => checked[`${areaId}-${semanaIdx}-${i}`]).length;
+        return Math.round((done / items.length) * 100);
+      };
+
+      const totalItems = data.areas.flatMap((a) =>
+        a.semanas.flatMap((s, si) => s.items.map((_, ii) => `${a.id}-${si}-${ii}`))
+      ).length;
+      const totalDone = Object.values(checked).filter(Boolean).length;
+      const globalProgress = Math.round((totalDone / totalItems) * 100);
+      const propuestaActiva = propuestas.find((p) => p.id === activePropuesta);
+      const com = comunicaciones.find(c => c.id === activeComunicacion);
+
+      return (
+        <div style={{ minHeight: "100vh", background: T.bg, color: T.text, fontFamily: "'Georgia', 'Times New Roman', serif", display: "flex", flexDirection: "column" }}>
+
+          {/* ── Header ─────────────────────────────────────── */}
+          <div style={{ background: T.surface, borderBottom: `1px solid ${T.border}`, padding: "36px 48px 28px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+            <div>
+              <div style={{ fontSize: 10, letterSpacing: 5, color: T.muted, marginBottom: 10, fontFamily: "monospace", fontWeight: "normal" }}>FASE 1 · DIAGNÓSTICO</div>
+              <div style={{ fontSize: 32, fontWeight: "normal", letterSpacing: 1, color: T.text }}>{data.meta.title}</div>
+              <div style={{ fontSize: 13, color: T.text2, marginTop: 5, letterSpacing: 0.5, fontStyle: "italic" }}>{data.meta.subtitle}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 10, color: T.muted, letterSpacing: 3, marginBottom: 8, fontFamily: "monospace" }}>PROGRESO GLOBAL</div>
+              <div style={{ fontSize: 40, color: area.color, fontWeight: "normal", lineHeight: 1 }}>
+                {globalProgress}<span style={{ fontSize: 16, color: T.muted, marginLeft: 2 }}>%</span>
+              </div>
+              <div style={{ width: 160, height: 3, background: T.border, marginTop: 10, borderRadius: 3, marginLeft: "auto" }}>
+                <div style={{ width: `${globalProgress}%`, height: "100%", background: area.color, borderRadius: 3, transition: "width 0.5s ease" }} />
+              </div>
+              <div style={{ fontSize: 10, color: T.muted, marginTop: 6, fontFamily: "monospace", letterSpacing: 1 }}>{totalDone} de {totalItems} ítems</div>
+            </div>
+          </div>
+
+          {/* ── Tabs principales ────────────────────────────── */}
+          <div style={{ background: T.surface, display: "flex", borderBottom: `1px solid ${T.border}`, padding: "0 48px" }}>
+            {[{ id: "diagnostico", label: "DIAGNÓSTICO" }, { id: "propuestas", label: "PROPUESTAS" }, { id: "comunicaciones", label: "BAJADAS" }].map((tab) => (
+              <button key={tab.id} onClick={() => setMainTab(tab.id)} style={{
+                background: "none", border: "none",
+                borderBottom: mainTab === tab.id ? `2px solid ${T.text}` : "2px solid transparent",
+                color: mainTab === tab.id ? T.text : T.muted,
+                padding: "14px 0", marginRight: 32, cursor: "pointer",
+                fontSize: 10, letterSpacing: 4, fontFamily: "monospace",
+                transition: "all 0.2s"
+              }}>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ══════════════════════════════════════════════════
+              TAB: DIAGNÓSTICO
+          ══════════════════════════════════════════════════ */}
+          {mainTab === "diagnostico" && (
+            <>
+              {/* Areas */}
+              <div style={{ background: T.surface, display: "flex", gap: 0, borderBottom: `1px solid ${T.border}`, overflowX: "auto" }}>
+                {data.areas.map((a) => {
+                  const totalProg = Math.round(a.semanas.reduce((acc, _, si) => acc + getProgress(a.id, si), 0) / 4);
+                  const isActive = activeArea === a.id;
+                  return (
+                    <button key={a.id} onClick={() => setActiveArea(a.id)} style={{
+                      background: isActive ? a.light : "none",
+                      border: "none",
+                      borderBottom: isActive ? `2px solid ${a.color}` : "2px solid transparent",
+                      borderTop: isActive ? `2px solid ${a.border}` : "2px solid transparent",
+                      color: isActive ? a.color : T.muted,
+                      padding: "14px 24px", cursor: "pointer",
+                      fontSize: 10, letterSpacing: 2, fontFamily: "monospace",
+                      whiteSpace: "nowrap", transition: "all 0.2s",
+                      display: "flex", alignItems: "center", gap: 8
+                    }}>
+                      <span style={{ fontSize: 14 }}>{a.icon}</span>
+                      {a.label}
+                      <span style={{
+                        fontSize: 9, marginLeft: 2,
+                        color: isActive ? a.color : T.border,
+                        background: isActive ? a.border : T.surface2,
+                        padding: "2px 6px", borderRadius: 20, fontWeight: "bold"
+                      }}>{totalProg}%</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Semanas */}
+              <div style={{ background: T.surface2, display: "flex", gap: 0, padding: "0 48px", borderBottom: `1px solid ${T.border}`, overflowX: "auto" }}>
+                {SEMANA_LABELS.map((label, idx) => {
+                  const prog = getProgress(activeArea, idx);
+                  const isActive = activeSemana === idx;
+                  return (
+                    <button key={idx} onClick={() => setActiveSemana(idx)} style={{
+                      background: "none", border: "none",
+                      borderBottom: isActive ? `2px solid ${area.color}` : "2px solid transparent",
+                      color: isActive ? T.text : T.text2,
+                      padding: "12px 20px", cursor: "pointer",
+                      fontSize: 12, letterSpacing: 1,
+                      transition: "all 0.2s",
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 6
+                    }}>
+                      {label}
+                      <div style={{ width: 44, height: 3, background: T.border, borderRadius: 3 }}>
+                        <div style={{ width: `${prog}%`, height: "100%", background: area.color, borderRadius: 3, transition: "width 0.4s ease", opacity: 0.8 }} />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Contenido semana */}
+              <div style={{ flex: 1, padding: "44px 48px", maxWidth: 860 }}>
+                {/* Foco */}
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 18, marginBottom: 36, padding: "20px 24px", background: area.light, border: `1px solid ${area.border}`, borderRadius: 8, borderLeft: `4px solid ${area.color}` }}>
+                  <div style={{ fontSize: 22, color: area.color, lineHeight: 1, marginTop: 2, opacity: 0.7 }}>{area.icon}</div>
+                  <div>
+                    <div style={{ fontSize: 9, letterSpacing: 4, color: area.color, fontFamily: "monospace", marginBottom: 6, opacity: 0.8 }}>FOCO DE LA SEMANA</div>
+                    <div style={{ fontSize: 19, color: T.text, fontWeight: "normal", lineHeight: 1.5 }}>{semanaData.foco}</div>
+                  </div>
+                </div>
+
+                {/* Items */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                  {semanaData.items.map((item, idx) => {
+                    const key = `${semanaKey}-${idx}`;
+                    const isDone = checked[key];
+                    return (
+                      <div key={idx} onClick={() => toggleCheck(idx)} style={{
+                        display: "flex", alignItems: "flex-start", gap: 16,
+                        padding: "16px 12px",
+                        borderBottom: `1px solid ${T.border}`,
+                        cursor: "pointer",
+                        transition: "all 0.15s",
+                        opacity: isDone ? 0.45 : 1,
+                        borderRadius: 4,
+                        background: isDone ? T.surface2 : "transparent",
+                      }}>
+                        <div style={{
+                          width: 20, height: 20,
+                          border: `1.5px solid ${isDone ? area.color : T.border}`,
+                          borderRadius: 4,
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          flexShrink: 0, marginTop: 2,
+                          background: isDone ? area.color : T.surface,
+                          transition: "all 0.15s"
+                        }}>
+                          {isDone && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                        </div>
+                        <div style={{
+                          fontSize: 15, lineHeight: 1.65,
+                          color: isDone ? T.muted : T.text,
+                          textDecoration: isDone ? "line-through" : "none",
+                          transition: "all 0.15s"
+                        }}>{item}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ marginTop: 36, padding: "16px 20px", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 6 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 10, letterSpacing: 2, color: T.muted, fontFamily: "monospace" }}>
+                    <span>{SEMANA_LABELS[activeSemana].toUpperCase()} · {area.label}</span>
+                    <span style={{ color: area.color, fontWeight: "bold" }}>{getProgress(activeArea, activeSemana)}%</span>
+                  </div>
+                  <div style={{ height: 4, background: T.border, borderRadius: 4 }}>
+                    <div style={{ width: `${getProgress(activeArea, activeSemana)}%`, height: "100%", background: area.color, borderRadius: 4, transition: "width 0.4s ease" }} />
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ══════════════════════════════════════════════════
+              TAB: PROPUESTAS
+          ══════════════════════════════════════════════════ */}
+          {mainTab === "propuestas" && (
+            <>
+              <div style={{ background: T.surface, display: "flex", gap: 0, borderBottom: `1px solid ${T.border}`, overflowX: "auto" }}>
+                {propuestas.map((p) => {
+                  const isActive = activePropuesta === p.id;
+                  return (
+                    <button key={p.id} onClick={() => setActivePropuesta(p.id)} style={{
+                      background: isActive ? p.light : "none",
+                      border: "none",
+                      borderBottom: isActive ? `2px solid ${p.color}` : "2px solid transparent",
+                      color: isActive ? p.color : T.muted,
+                      padding: "16px 28px", cursor: "pointer",
+                      fontSize: 10, letterSpacing: 3, fontFamily: "monospace",
+                      whiteSpace: "nowrap", transition: "all 0.2s",
+                      display: "flex", alignItems: "center", gap: 8
+                    }}>
+                      <span style={{ fontSize: 15 }}>{p.icon}</span>{p.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ flex: 1, padding: "44px 48px", maxWidth: 980 }}>
+                {/* Intro */}
+                <div style={{ marginBottom: 40, padding: "28px 32px", background: propuestaActiva.light, border: `1px solid ${propuestaActiva.border}`, borderRadius: 8, borderLeft: `4px solid ${propuestaActiva.color}` }}>
+                  <div style={{ fontSize: 9, letterSpacing: 4, color: propuestaActiva.color, fontFamily: "monospace", marginBottom: 10 }}>DECLARACIÓN DE ÁREA</div>
+                  <div style={{ fontSize: 19, color: T.text, marginBottom: 14, fontWeight: "normal", lineHeight: 1.4 }}>{propuestaActiva.intro.titulo}</div>
+                  <div style={{ fontSize: 14, color: T.text2, lineHeight: 1.9, maxWidth: 740 }}>{propuestaActiva.intro.texto}</div>
+                </div>
+
+                {/* Evaluadores */}
+                {propuestaActiva.evaluadores && (
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: 32, marginBottom: 40, padding: "18px 24px", background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8 }}>
+                    <div style={{ fontSize: 9, letterSpacing: 3, color: T.muted, fontFamily: "monospace", whiteSpace: "nowrap", paddingTop: 2 }}>AUTORIDADES<br />DE EVALUACIÓN</div>
+                    <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+                      {propuestaActiva.evaluadores.map((ev, i) => (
+                        <div key={i} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          <div style={{ fontSize: 14, color: propuestaActiva.color, letterSpacing: 0.5 }}>{ev.nombre}</div>
+                          <div style={{ fontSize: 9, color: T.muted, fontFamily: "monospace", letterSpacing: 2 }}>{ev.rol.toUpperCase()}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ marginLeft: "auto", fontSize: 11, color: T.text2, lineHeight: 1.7, maxWidth: 280, textAlign: "right", fontStyle: "italic" }}>
+                      Pueden señalar un incumplimiento en cualquier momento, siempre indicando la norma específica.
+                    </div>
+                  </div>
+                )}
+
+                {/* Secciones */}
+                {propuestaActiva.secciones.map((seccion, si) => (
+                  <div key={si} style={{ marginBottom: 36 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8, paddingBottom: 10, borderBottom: `1px solid ${T.border}` }}>
+                      <div style={{ fontSize: 11, letterSpacing: 2, color: T.text, fontFamily: "monospace", flex: 1 }}>{seccion.titulo.toUpperCase()}</div>
+                      <div style={{
+                        fontSize: 9, letterSpacing: 1,
+                        color: seccion.estado === "APROBADO" ? "#3D826A" : seccion.estado === "EN REVISIÓN" ? "#B8763A" : T.muted,
+                        fontFamily: "monospace",
+                        border: `1px solid currentColor`,
+                        padding: "2px 8px", borderRadius: 20, opacity: 0.8
+                      }}>{seccion.estado}</div>
+                    </div>
+
+                    {seccion.items.map((item, ii) => {
+                      const expandKey = `${propuestaActiva.id}-${si}-${ii}`;
+                      const isExpanded = expandedItems[expandKey];
+                      return (
+                        <div key={ii} style={{ borderBottom: `1px solid ${T.border}`, overflow: "hidden" }}>
+                          <div onClick={() => toggleExpand(expandKey)} style={{
+                            display: "flex", alignItems: "flex-start", gap: 14,
+                            padding: "14px 8px", cursor: "pointer",
+                            transition: "background 0.15s",
+                            background: isExpanded ? propuestaActiva.light : "transparent",
+                            borderRadius: isExpanded ? "6px 6px 0 0" : 0,
+                          }}>
+                            <div style={{ width: 7, height: 7, borderRadius: "50%", background: propuestaActiva.color, flexShrink: 0, marginTop: 7, opacity: 0.7 }} />
+                            <div style={{ flex: 1, fontSize: 14, color: T.text, lineHeight: 1.55 }}>{item.label}</div>
+                            <div style={{
+                              fontSize: 18, color: propuestaActiva.color,
+                              transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)",
+                              transition: "transform 0.2s", flexShrink: 0, marginTop: -1, opacity: 0.6
+                            }}>›</div>
+                          </div>
+                          {isExpanded && (
+                            <div style={{
+                              padding: "4px 20px 20px 30px",
+                              fontSize: 13, color: T.text2, lineHeight: 1.85,
+                              maxWidth: 700,
+                              background: propuestaActiva.light,
+                              borderLeft: `3px solid ${propuestaActiva.border}`,
+                              borderRadius: "0 0 6px 0",
+                              marginLeft: 3,
+                            }}>
+                              {item.detalle}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+
+                <div style={{ marginTop: 48, padding: "14px 20px", background: T.surface2, border: `1px solid ${T.border}`, borderRadius: 6, fontSize: 10, color: T.muted, letterSpacing: 1, fontFamily: "monospace", lineHeight: 1.8 }}>
+                  ESTADO: BORRADOR · Pendiente de revisión y aprobación por dirección · Beautyderm Fase 1
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ══════════════════════════════════════════════════
+              TAB: COMUNICACIONES / BAJADAS
+          ══════════════════════════════════════════════════ */}
+          {mainTab === "comunicaciones" && (
+            <>
+              <div style={{ background: T.surface, display: "flex", gap: 0, borderBottom: `1px solid ${T.border}`, overflowX: "auto" }}>
+                {comunicaciones.map((c) => {
+                  const isActive = activeComunicacion === c.id;
+                  return (
+                    <button key={c.id} onClick={() => setActiveComunicacion(c.id)} style={{
+                      background: isActive ? c.light : "none",
+                      border: "none",
+                      borderBottom: isActive ? `2px solid ${c.color}` : "2px solid transparent",
+                      color: isActive ? c.color : T.muted,
+                      padding: "14px 24px", cursor: "pointer",
+                      fontSize: 10, letterSpacing: 2, fontFamily: "monospace",
+                      whiteSpace: "nowrap", transition: "all 0.2s",
+                      display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4
+                    }}>
+                      {c.label}
+                      <span style={{ fontSize: 9, color: isActive ? c.color : T.border, letterSpacing: 1, opacity: 0.8 }}>
+                        {c.subtitulo.split("·")[0].trim()}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div style={{ flex: 1, padding: "44px 48px", maxWidth: 820 }}>
+                {/* Header comunicación */}
+                <div style={{ marginBottom: 32 }}>
+                  <div style={{ fontSize: 9, letterSpacing: 4, color: T.muted, fontFamily: "monospace", marginBottom: 8 }}>{com.subtitulo.toUpperCase()}</div>
+                  <div style={{ fontSize: 24, color: T.text, fontWeight: "normal", lineHeight: 1.3, marginBottom: 14 }}>{com.label}</div>
+                  <div style={{ fontSize: 11, fontFamily: "monospace", color: T.text2 }}>
+                    TONO · <span style={{ color: com.color }}>{com.tono}</span>
+                  </div>
+                </div>
+
+                {/* Contexto */}
+                <div style={{ padding: "16px 20px", background: com.light, border: `1px solid ${com.border}`, borderRadius: 6, marginBottom: 32 }}>
+                  <span style={{ fontSize: 9, letterSpacing: 3, color: com.color, fontFamily: "monospace", display: "block", marginBottom: 6 }}>CONTEXTO DE USO</span>
+                  <div style={{ fontSize: 13, color: T.text2, lineHeight: 1.75 }}>{com.contexto}</div>
+                </div>
+
+                {/* Texto */}
+                <div style={{ background: T.surface, border: `1px solid ${T.border}`, borderRadius: 8, padding: "32px 36px", marginBottom: 24, borderLeft: `4px solid ${com.color}` }}>
+                  <div style={{ fontSize: 9, letterSpacing: 4, color: com.color, fontFamily: "monospace", marginBottom: 20 }}>TEXTO</div>
+                  {com.texto.split("\n\n").map((parrafo, i) => (
+                    <p key={i} style={{
+                      fontSize: 15,
+                      color: parrafo.startsWith("[") ? T.muted : T.text,
+                      lineHeight: 1.95,
+                      marginBottom: 20,
+                      fontStyle: parrafo.startsWith("[") ? "italic" : "normal"
+                    }}>{parrafo}</p>
+                  ))}
+                </div>
+
+                {/* Notas */}
+                <div style={{ padding: "16px 20px", background: T.surface2, border: `1px solid ${T.border}`, borderRadius: 6 }}>
+                  <span style={{ fontSize: 9, letterSpacing: 3, color: T.muted, fontFamily: "monospace", display: "block", marginBottom: 6 }}>NOTAS</span>
+                  <div style={{ fontSize: 12, color: T.text2, lineHeight: 1.75, fontStyle: "italic" }}>{com.notas}</div>
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* ── Footer ─────────────────────────────────────── */}
+          <div style={{ padding: "18px 48px", borderTop: `1px solid ${T.border}`, background: T.surface, display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 9, color: T.muted, letterSpacing: 3, fontFamily: "monospace" }}>
+            <span>BEAUTYDERM · CENTRO MÉDICO ESTÉTICO</span>
+            <span>FASE 1 · {data.areas.length} ÁREAS · 4 SEMANAS</span>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
