@@ -176,13 +176,13 @@
   <div class="big">+219%</div>
   <div class="detail">
     <div class="title">Ticket cuando el paciente lleva 2 o más tratamientos en la misma visita</div>
-    <div class="desc">Este es el argumento central del Beauty Plan: cuando el equipo propone un plan de múltiples tratamientos, el ticket es 3,2x mayor. Ya ocurre en 260 de 1.763 ventas (15%). El objetivo es llevarlo al 35–40%.</div>
+    <div class="desc">Este es el argumento central del Beauty Plan: cuando el equipo propone un plan de múltiples tratamientos, el ticket es significativamente mayor. Ya ocurre en 164 de 950 visitas atendidas (17%). El objetivo es llevarlo al 35–40%.</div>
     <div class="vs">
-      <div class="vs-item"><div class="v">$148.000</div><div class="l">Ticket prom. 1 trat.</div></div>
-      <div class="vs-item"><div class="v">$472.000</div><div class="l">Ticket prom. 2+ trat.</div></div>
-      <div class="vs-item"><div class="v">15%</div><div class="l">Ventas multi-trat. hoy</div></div>
-      <div class="vs-item"><div class="v">37%</div><div class="l">Dra. Rubio · multi-trat actual</div></div>
-      <div class="vs-item"><div class="v">34%</div><div class="l">Dra. Lima · multi-trat actual</div></div>
+      <div class="vs-item"><div class="v">$364K</div><div class="l">Ticket prom. por visita</div></div>
+      <div class="vs-item"><div class="v">17%</div><div class="l">Visitas multi-trat. hoy</div></div>
+      <div class="vs-item"><div class="v">25%</div><div class="l">Arelis Moreno · multi-trat actual</div></div>
+      <div class="vs-item"><div class="v">17%</div><div class="l">Dra. Rubio · multi-trat actual</div></div>
+      <div class="vs-item"><div class="v">16%</div><div class="l">Dra. Lima · multi-trat actual</div></div>
     </div>
   </div>
 </div>
@@ -195,13 +195,13 @@
     <div class="kpi-sub">Feb – Jun 2026</div>
   </div>
   <div class="kpi sage">
-    <div class="kpi-label">Ventas realizadas</div>
-    <div class="kpi-value">1.763</div>
+    <div class="kpi-label">Visitas atendidas</div>
+    <div class="kpi-value">950</div>
     <div class="kpi-sub">Feb – Jun 2026</div>
   </div>
   <div class="kpi lavender">
-    <div class="kpi-label">Ticket promedio</div>
-    <div class="kpi-value">$196K</div>
+    <div class="kpi-label">Ticket promedio / visita</div>
+    <div class="kpi-value">$364K</div>
     <div class="kpi-sub">Feb – Jun 2026</div>
   </div>
   <div class="kpi steel">
@@ -239,7 +239,7 @@
       <canvas id="pagosChart" height="230"></canvas>
     </div>
     <div class="card">
-      <div class="card-title">Ventas únicas vs multi-tratamiento por mes</div>
+      <div class="card-title">Visitas atendidas: única vs multi-tratamiento por mes</div>
       <canvas id="multiChart" height="230"></canvas>
     </div>
   </div>
@@ -278,7 +278,7 @@
 <!-- ============ TAB: PROFESIONALES ============ -->
 <div id="tab-profesionales" class="tab-content">
   <div class="nota nota-sage">
-    <strong>Dra. Rubio (36%) y Dra. Lima (34%)</strong> lideran el porcentaje de ventas multi-tratamiento — sin ningún sistema formal de planes. Son las referentes naturales para entrenar al resto del equipo.
+    <strong>Arelis Moreno (25%)</strong> lidera la tasa de visitas multi-tratamiento, seguida por <strong>Dra. Rubio (17%) y Dra. Lima (16%)</strong> — sin ningún sistema formal de planes. Son las referentes naturales para entrenar al resto del equipo.
   </div>
   <div class="two-col">
     <div class="card">
@@ -737,8 +737,8 @@
 const meses_labels = ['Feb','Mar','Abr','May','Jun'];
 
 const monthly_rev = [20620000,76570000,64340000,116960000,67000000];
-const monthly_single = [85,347,342,491,238]; // ventas 1 trat por mes
-const monthly_multi  = [21,63,54,82,40];     // ventas 2+ trat por mes
+const monthly_single = [81,189,143,245,128]; // visitas atendidas 1 trat por mes (fuente: citas Reservo)
+const monthly_multi  = [26,41,30,48,19];     // visitas atendidas 2+ trat por mes (fuente: citas Reservo)
 
 const tick_dist = [
   {rango:'$0 – $50K',      count:452, rev:16100000},
@@ -809,10 +809,10 @@ const categorias = {
 };
 
 const profesionales = [
-  {nombre:"Dra. Denisse Rubio",    ventas:195, multi:71, rev:79400000},
-  {nombre:"Dra. Rose Lima",        ventas:127, multi:43, rev:41100000},
+  {nombre:"Dra. Denisse Rubio",    ventas:350, multi:60, rev:79400000},
+  {nombre:"Dra. Rose Lima",        ventas:185, multi:30, rev:41100000},
   {nombre:"Dra. Gabriela Moreno",  ventas:54,  multi:12, rev:20800000},
-  {nombre:"Ctra. Arelis Moreno",   ventas:140, multi:53, rev:9500000},
+  {nombre:"Ctra. Arelis Moreno",   ventas:239, multi:59, rev:9500000},
   {nombre:"Dra. Ana Mesa",         ventas:18,  multi:5,  rev:5500000},
   {nombre:"Dra. Laura Trejo",      ventas:8,   multi:1,  rev:2150000},
   {nombre:"Dr. Martín Milani",     ventas:5,   multi:3,  rev:1760000},
