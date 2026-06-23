@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeautyDerm · Análisis Variable Denisse · Jun 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#F7F4EF; --surface:#FFFFFF; --surface2:#F2EEE7; --border:#E4DDD2;
+  --text:#2E2A25; --text2:#7A7269; --muted:#B5ADA2;
+  --berry:#6D2E46; --berry-l:#FBF0F0; --berry-b:#EAC0C0;
+  --gold:#B8763A;  --gold-l:#FDF5EC;  --gold-b:#F0D9B8;
+  --sage:#3D826A;  --sage-l:#EEF7F3;  --sage-b:#B8DDD1;
+  --steel:#3B6F9E; --steel-l:#EEF4FB; --steel-b:#B5CFE8;
+  --lav:#6B5A9E;   --lav-l:#F3F0FB;   --lav-b:#CFC5ED;
+  --red:#C0392B;   --amber:#B7770A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:Georgia,'Times New Roman',serif;font-size:14px;line-height:1.6;}
+
+/* ── HEADER ── */
+.page-header{background:var(--berry);padding:24px 36px 18px;}
+.page-header .eyebrow{font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px;}
+.page-header h1{font-size:22px;font-weight:normal;color:#fff;}
+.page-header .sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px;font-style:italic;}
+
+/* ── NAV TABS ── */
+.tab-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 36px;display:flex;gap:0;position:sticky;top:0;z-index:100;}
+.tab{padding:12px 20px;font-family:monospace;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--berry);border-bottom-color:var(--berry);}
+
+/* ── LAYOUT ── */
+.container{max-width:1140px;margin:0 auto;padding:28px 24px 60px;}
+.section{display:none;}
+.section.active{display:block;}
+.section-title{font-family:monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:8px;margin:28px 0 16px;}
+.section-title:first-child{margin-top:0;}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:18px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;}
+.card-head{font-family:monospace;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--text2);margin-bottom:14px;}
+.card.bl-berry{border-left:4px solid var(--berry);}
+.card.bl-gold {border-left:4px solid var(--gold);}
+.card.bl-sage {border-left:4px solid var(--sage);}
+.card.bl-steel{border-left:4px solid var(--steel);}
+.card.bl-red  {border-left:4px solid var(--red);}
+.card.bl-amber{border-left:4px solid var(--amber);}
+
+/* ── KPIs ── */
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;}
+.kpi-lbl{font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:8px;}
+.kpi-val{font-size:26px;font-weight:bold;line-height:1;font-family:monospace;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4;}
+.kpi.berry{border-left:4px solid var(--berry);}.kpi.berry .kpi-val{color:var(--berry);}
+.kpi.red  {border-left:4px solid var(--red);  }.kpi.red   .kpi-val{color:var(--red);}
+.kpi.sage {border-left:4px solid var(--sage); }.kpi.sage  .kpi-val{color:var(--sage);}
+.kpi.gold {border-left:4px solid var(--gold); }.kpi.gold  .kpi-val{color:var(--gold);}
+.kpi.steel{border-left:4px solid var(--steel);}.kpi.steel .kpi-val{color:var(--steel);}
+
+/* ── ALERT ── */
+.alert{border-radius:8px;padding:18px 22px;margin-bottom:22px;}
+.alert.red   {background:var(--berry-l);border:1px solid var(--berry-b);border-left:5px solid var(--red);}
+.alert.amber {background:var(--gold-l); border:1px solid var(--gold-b); border-left:5px solid var(--amber);}
+.alert.blue  {background:var(--steel-l);border:1px solid var(--steel-b);border-left:5px solid var(--steel);}
+.alert-title{font-size:14px;font-weight:bold;margin-bottom:6px;}
+.alert.red   .alert-title{color:var(--red);}
+.alert.amber .alert-title{color:var(--amber);}
+.alert.blue  .alert-title{color:var(--steel);}
+.alert p{font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* ── HERO SPLIT ── */
+.hero-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px;}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;}
+.hero-card.con{border-top:4px solid var(--sage);}
+.hero-card.sin{border-top:4px solid var(--red);}
+.hero-lbl{font-size:11px;font-family:monospace;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin-bottom:10px;}
+.hero-big{font-size:42px;font-weight:bold;font-family:monospace;line-height:1;margin-bottom:4px;}
+.hero-card.con .hero-big{color:var(--sage);}
+.hero-card.sin .hero-big{color:var(--red);}
+.hero-sub{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.hero-row{display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);}
+.hero-row:last-child{border-bottom:none;}
+.hero-row .k{color:var(--text2);}
+.hero-row .v{font-weight:bold;font-family:monospace;}
+
+/* ── ABSENCE BARS ── */
+.ab-wrap{display:flex;align-items:center;gap:10px;margin:8px 0;}
+.ab-mes{font-size:11px;font-family:monospace;width:50px;color:var(--text2);}
+.ab-track{flex:1;background:var(--border);border-radius:4px;height:22px;position:relative;overflow:hidden;}
+.ab-pres{height:100%;background:var(--sage);border-radius:4px;display:flex;align-items:center;padding-left:8px;}
+.ab-aus{position:absolute;top:0;right:0;height:100%;background:var(--berry-l);border-left:2px dashed var(--red);display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.ab-lbl{font-size:10px;font-family:monospace;color:#fff;}
+.ab-lbl-r{font-size:10px;font-family:monospace;color:var(--red);}
+.ab-pct{font-size:10px;font-family:monospace;width:48px;text-align:right;color:var(--text2);}
+
+/* ── PILL ── */
+.pill{display:inline-block;font-size:10px;font-family:monospace;padding:2px 7px;border-radius:10px;font-weight:bold;}
+.pill.red   {background:var(--berry-l);color:var(--red);  border:1px solid var(--berry-b);}
+.pill.green {background:var(--sage-l); color:var(--sage); border:1px solid var(--sage-b);}
+.pill.amber {background:var(--gold-l); color:var(--amber);border:1px solid var(--gold-b);}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl th{background:var(--berry);color:#fff;font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.5px;padding:10px 12px;text-align:left;font-weight:normal;}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:nth-child(even) td{background:var(--surface2);}
+.tbl tr.hl td{background:var(--berry-l);}
+.tbl tr.bold td{font-weight:bold;background:var(--surface2);}
+.num{font-family:monospace;text-align:right;}
+.sage-txt {color:var(--sage);font-weight:bold;}
+.gold-txt {color:var(--gold);font-weight:bold;}
+.berry-txt{color:var(--berry);font-weight:bold;}
+.red-txt  {color:var(--red);font-weight:bold;}
+.steel-txt{color:var(--steel);font-weight:bold;}
+.muted-txt{color:var(--muted);}
+
+/* ── INSIGHT GRID ── */
+.insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
+.insight{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;}
+.insight.red   {border-left:4px solid var(--red);}
+.insight.amber {border-left:4px solid var(--amber);}
+.insight.sage  {border-left:4px solid var(--sage);}
+.insight-t{font-size:10px;font-family:monospace;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:6px;}
+.insight-b{font-size:13px;line-height:1.5;}
+.insight-num{font-size:22px;font-weight:bold;font-family:monospace;}
+
+/* ── SCENARIO CARDS ── */
+.sc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.sc-head{padding:14px 18px;color:#fff;}
+.sc-head.sage {background:var(--sage);}
+.sc-head.gold {background:var(--gold);}
+.sc-head.berry{background:var(--berry);}
+.sc-eyebrow{font-family:monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;opacity:.8;}
+.sc-title{font-size:15px;font-weight:bold;margin-top:2px;}
+.sc-subtitle{font-size:11px;opacity:.8;margin-top:2px;}
+.sc-body{padding:14px 18px;}
+.sc-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.sc-row:last-child{border-bottom:none;}
+.sc-row .lbl{color:var(--text2);}
+.sc-row .val{font-family:monospace;font-weight:bold;}
+.sc-row.hi .val{font-size:15px;}
+.sc-row.hi.sage .val  {color:var(--sage);}
+.sc-row.hi.gold .val  {color:var(--gold);}
+.sc-row.hi.berry .val {color:var(--berry);}
+.sc-row.hi.red .val   {color:var(--red);}
+.sc-divider{background:var(--bg);padding:4px 18px;font-family:monospace;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin:4px -18px;}
+
+/* ── PATIENT BARS ── */
+.pac-bar-row{margin-bottom:12px;}
+.pac-bar-lbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;}
+.pac-bar-track{background:var(--border);border-radius:4px;height:20px;overflow:hidden;}
+.pac-bar{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;font-family:monospace;font-size:11px;color:#fff;font-weight:bold;}
+.pac-bar.sage {background:var(--sage);}
+.pac-bar.gold {background:var(--gold);}
+.pac-bar.steel{background:var(--steel);}
+.pac-bar.berry{background:var(--berry);}
+
+/* ── TALKING POINTS ── */
+.tp{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--berry);border-radius:6px;padding:14px 18px;margin-bottom:10px;}
+.tp.sage {border-left-color:var(--sage);}
+.tp.gold {border-left-color:var(--gold);}
+.tp.steel{border-left-color:var(--steel);}
+.tp.lav  {border-left-color:var(--lav);}
+.tp-num{font-family:monospace;font-size:10px;color:var(--muted);margin-bottom:4px;}
+.tp-body{font-size:13px;line-height:1.5;}
+
+/* ── FOOTER ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:14px 36px;font-family:monospace;font-size:10px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="eyebrow">BeautyDerm · Análisis interno · Jun 2026</div>
+  <h1>Impacto financiero — Variable Denisse</h1>
+  <div class="sub">Fuente: Reservo Feb–Jun 2026 · Para uso interno / referencia de consultoría</div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('historico',this)">Histórico</div>
+  <div class="tab" onclick="showTab('escenarios',this)">Escenarios financieros</div>
+  <div class="tab" onclick="showTab('pacientes',this)">Pacientes</div>
+  <div class="tab" onclick="showTab('beautyplan',this)">Beauty Plan</div>
+  <div class="tab" onclick="showTab('decisiones',this)">Decisiones</div>
+</div>
+
+<!-- ══════════════════════════════════════ TAB 1: HISTÓRICO ══════════════════════════════════════ -->
+<div id="historico" class="section active">
+<div class="container">
+
+  <div class="alert red">
+    <div class="alert-title">⚠ Riesgo de concentración crítico</div>
+    <p>Denisse generó el <strong>43% del revenue total</strong> entre Feb–Jun 2026, estando presente solo el <strong>53% de los días hábiles</strong>. En los 48 días que estuvo ausente, el revenue cayó un <strong>59%</strong> — de $2.56M a $1.06M/día. Revenue no capturado estimado en el período: <strong>$72M</strong>. El viaje Jun 18 → Jul 10 suma ~17 días hábiles más de exposición.</p>
+  </div>
+
+  <div class="g4">
+    <div class="kpi berry"><div class="kpi-lbl">Revenue atribuido</div><div class="kpi-val">43%</div><div class="kpi-sub">$78.1M de $181.5M<br>Feb–Jun 2026</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Caída sin ella</div><div class="kpi-val">−59%</div><div class="kpi-sub">$1.06M vs $2.56M/día<br>Gap: $1.5M/día</div></div>
+    <div class="kpi sage"><div class="kpi-lbl">Días ausente</div><div class="kpi-val">48</div><div class="kpi-sub">De 99 hábiles totales<br>Promedio: 9.6/mes</div></div>
+    <div class="kpi gold"><div class="kpi-lbl">Revenue no capturado</div><div class="kpi-val">$72M</div><div class="kpi-sub">48 días × $1.5M/día<br>Sin contar cobertura ext.</div></div>
+  </div>
+
+  <div class="hero-split">
+    <div class="hero-card con">
+      <div class="hero-lbl">Días CON Denisse · 52 días (53%)</div>
+      <div class="hero-big">$2.56M</div>
+      <div class="hero-sub">Revenue promedio por día hábil</div>
+      <div class="hero-row"><span class="k">Revenue total en esos días</span><span class="v">$133M</span></div>
+      <div class="hero-row"><span class="k">Ticket promedio paciente</span><span class="v">$224K</span></div>
+      <div class="hero-row"><span class="k">Mejor mes (Mayo): 19 días pres.</span><span class="v">$69.1M</span></div>
+      <div class="hero-row"><span class="k">Multi-tratamiento prom.</span><span class="v">~19%</span></div>
+    </div>
+    <div class="hero-card sin">
+      <div class="hero-lbl">Días SIN Denisse · 48 días (48%)</div>
+      <div class="hero-big">$1.06M</div>
+      <div class="hero-sub">Revenue promedio por día hábil</div>
+      <div class="hero-row"><span class="k">Revenue total en esos días</span><span class="v">$51M</span></div>
+      <div class="hero-row"><span class="k">Ticket promedio paciente</span><span class="v">$150K</span></div>
+      <div class="hero-row"><span class="k">Peor mes (Abril): 22 días aus.</span><span class="v">$30.0M</span></div>
+      <div class="hero-row"><span class="k">Multi-tratamiento prom.</span><span class="v">~15%</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">Patrón de presencia y ausencias · mes a mes</div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-head">Días hábiles presentes vs. ausentes por mes</div>
+    <div class="ab-wrap">
+      <span class="ab-mes">Feb</span>
+      <div class="ab-track">
+        <div class="ab-pres" style="width:61.5%"><span class="ab-lbl">8 pres.</span></div>
+        <div class="ab-aus"  style="width:38.5%"><span class="ab-lbl-r">5 aus.</span></div>
+      </div>
+      <span class="ab-pct">38% aus.</span><span class="pill amber">Moderado</span>
+    </div>
+    <div class="ab-wrap">
+      <span class="ab-mes">Mar</span>
+      <div class="ab-track">
+        <div class="ab-pres" style="width:33.3%"><span class="ab-lbl">8 pres.</span></div>
+        <div class="ab-aus"  style="width:66.7%"><span class="ab-lbl-r">16 aus.</span></div>
+      </div>
+      <span class="ab-pct">67% aus.</span><span class="pill red">Alto</span>
+    </div>
+    <div class="ab-wrap">
+      <span class="ab-mes">Abr</span>
+      <div class="ab-track">
+        <div class="ab-pres" style="width:8.3%"></div>
+        <div class="ab-aus"  style="width:91.7%"><span class="ab-lbl-r">22 aus. — prácticamente el mes entero</span></div>
+      </div>
+      <span class="ab-pct">92% aus.</span><span class="pill red">Crítico</span>
+    </div>
+    <div class="ab-wrap">
+      <span class="ab-mes">May</span>
+      <div class="ab-track">
+        <div class="ab-pres" style="width:79.2%"><span class="ab-lbl">19 pres.</span></div>
+        <div class="ab-aus"  style="width:20.8%"><span class="ab-lbl-r">5 aus.</span></div>
+      </div>
+      <span class="ab-pct">21% aus.</span><span class="pill green">Bajo</span>
+    </div>
+    <div class="ab-wrap">
+      <span class="ab-mes">Jun*</span>
+      <div class="ab-track">
+        <div class="ab-pres" style="width:100%"><span class="ab-lbl">15 días hasta Jun 17</span></div>
+      </div>
+      <span class="ab-pct">0% aus.</span><span class="pill green">Presente</span>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px">* Jun: datos hasta 17/6. Viaje 18/6 → 10/7 = ~17 días hábiles adicionales no contabilizados.</p>
+  </div>
+
+  <div class="section-title">Datos mes a mes — todos los indicadores</div>
+  <div class="card" style="margin-bottom:18px">
+    <table class="tbl">
+      <thead><tr>
+        <th>Mes</th><th>Rev. total</th><th>Rev. Denisse</th><th>% Den.</th>
+        <th>Citas tot.</th><th>Citas Den.</th><th>% Citas</th>
+        <th>Días aus.</th><th>Multi-trat</th><th>Ticket prom.</th><th>Ticket Den.</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Febrero</strong></td><td class="num">$17.2M</td><td class="num">$10.1M</td>
+          <td><span class="pill amber">59%</span></td><td class="num">106</td><td class="num">48</td><td class="num">45%</td>
+          <td class="num">5 <span class="pill amber">38%</span></td><td class="num">25.2%</td><td class="num">$162K</td><td class="num">$210K</td>
+        </tr>
+        <tr class="hl">
+          <td><strong>Marzo</strong></td><td class="num">$39.1M</td><td class="num">$10.1M</td>
+          <td><span class="pill amber">26%</span></td><td class="num">230</td><td class="num">70</td><td class="num">30%</td>
+          <td class="num">16 <span class="pill red">67%</span></td><td class="num">18.3%</td><td class="num">$170K</td><td class="num">$144K*</td>
+        </tr>
+        <tr class="hl">
+          <td><strong>Abril ⚠</strong></td><td class="num">$30.0M</td><td class="num">$4.7M</td>
+          <td><span class="pill red">16%</span></td><td class="num">173</td><td class="num">18</td><td class="num">10%</td>
+          <td class="num">22 <span class="pill red">92%</span></td><td class="num">17.3%</td><td class="num">$173K</td><td class="num">$264K</td>
+        </tr>
+        <tr>
+          <td><strong>Mayo</strong></td><td class="num">$69.1M</td><td class="num">$37.6M</td>
+          <td><span class="pill green">54%</span></td><td class="num">293</td><td class="num">139</td><td class="num">47%</td>
+          <td class="num">5 <span class="pill green">21%</span></td><td class="num">16.7%</td><td class="num">$236K</td><td class="num">$270K</td>
+        </tr>
+        <tr>
+          <td><strong>Junio*</strong></td><td class="num">$26.2M</td><td class="num">$15.6M</td>
+          <td><span class="pill green">60%</span></td><td class="num">147</td><td class="num">75</td><td class="num">51%</td>
+          <td class="num">0 <span class="pill green">0%</span></td><td class="num">12.9%</td><td class="num">$178K</td><td class="num">$208K</td>
+        </tr>
+        <tr class="bold">
+          <td>TOTAL / PROM</td><td class="num">$181.5M</td><td class="num">$78.1M</td>
+          <td>43%</td><td class="num">949</td><td class="num">350</td><td class="num">37%</td>
+          <td class="num">48 días</td><td class="num">17.0%</td><td class="num">$191K</td><td class="num">$224K</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px">* Ticket Den. en marzo bajo: servicios de control/seguimiento. * Jun datos hasta 17/6.</p>
+  </div>
+
+  <div class="section-title">Gráficos</div>
+  <div class="g2">
+    <div class="card"><div class="card-head">Revenue mensual ($M) y % atribuido a Denisse</div><canvas id="chartRev" height="220"></canvas></div>
+    <div class="card"><div class="card-head">Tasa de multi-tratamiento por mes (%)</div><canvas id="chartMulti" height="220"></canvas></div>
+  </div>
+  <div class="g2">
+    <div class="card"><div class="card-head">Ticket promedio — Denisse vs. resto del equipo ($K)</div><canvas id="chartTicket" height="220"></canvas></div>
+    <div class="card"><div class="card-head">Revenue diario según presencia de Denisse ($M)</div><canvas id="chartCorr" height="220"></canvas></div>
+  </div>
+
+  <div class="section-title">Insights clave</div>
+  <div class="insight-grid">
+    <div class="insight red">
+      <div class="insight-t">Concentración de revenue</div>
+      <div class="insight-b"><span class="insight-num" style="color:var(--red)">43%</span> del revenue Feb–Jun en una sola médica. Ningún otro profesional supera el 22%. Si falta un mes completo, la clínica pierde ~$25–30M de revenue según el patrón histórico.</div>
+    </div>
+    <div class="insight amber">
+      <div class="insight-t">Abril — mes más crítico registrado</div>
+      <div class="insight-b">Estuvo ausente el <span class="insight-num" style="color:var(--amber)">92%</span> de los días (22 de 24). Revenue: $30M vs $69.1M en mayo. Diferencia de <strong>$39M en el mismo mes del año</strong>.</div>
+    </div>
+    <div class="insight sage">
+      <div class="insight-t">Ticket Denisse consistentemente mayor</div>
+      <div class="insight-b">Ticket promedio de sus pacientes: <span class="insight-num" style="color:var(--sage)">+50%</span> vs resto del equipo ($224K vs $150K). Mayor conversión a multi-tratamiento en meses con más capacidad (mayo: 47% de citas son suyas).</div>
+    </div>
+    <div class="insight red">
+      <div class="insight-t">Multi-tratamiento en caída</div>
+      <div class="insight-b">Cayó de <strong>25.2% en febrero</strong> a <strong>12.9% en junio</strong> — una caída del <span class="insight-num" style="color:var(--red)">49%</span> en el indicador. Clínica-wide, no solo Denisse. El Beauty Plan debe arrancar antes de que siga bajando.</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ TAB 2: ESCENARIOS ══════════════════════════════════════ -->
+<div id="escenarios" class="section">
+<div class="container">
+
+  <div class="alert amber">
+    <div class="alert-title">Cómo leer estos escenarios</div>
+    <p>No son proyecciones — son <strong>meses hipotéticos basados en datos reales</strong>. Presencia plena = lo que debería ser (nunca ocurrió en el período). Promedio = la realidad de Feb–Jun. Sin Denisse = lo que fue Abril 2026. Se asume que médicos externos cubren el 60% del gap de $1.5M/día cuando ella no está, a un costo del 30% de comisión. Insumos = 30% del revenue total (costo variable).</p>
+  </div>
+
+  <div class="section-title">Los 3 escenarios — mes tipo SIN Beauty Plan</div>
+  <div class="g3">
+    <div class="sc-card">
+      <div class="sc-head sage">
+        <div class="sc-eyebrow">Escenario 1</div>
+        <div class="sc-title">Presencia plena</div>
+        <div class="sc-subtitle">22 días hábiles con Denisse</div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-divider">Revenue</div>
+        <div class="sc-row"><span class="lbl">Revenue del mes</span><span class="val sage-txt">$56.3M</span></div>
+        <div class="sc-row"><span class="lbl">Cobertura externa</span><span class="val muted-txt">$0 (sin ausencias)</span></div>
+        <div class="sc-divider">Costos estimados</div>
+        <div class="sc-row"><span class="lbl">Sueldo Denisse (fijo)</span><span class="val">$6.5M</span></div>
+        <div class="sc-row"><span class="lbl">Honorario médico ext.</span><span class="val sage-txt">$0</span></div>
+        <div class="sc-row"><span class="lbl">Insumos 30% rev.</span><span class="val">$16.9M</span></div>
+        <div class="sc-row"><span class="lbl">Total costos</span><span class="val">$23.4M</span></div>
+        <div class="sc-divider">Resultado</div>
+        <div class="sc-row hi sage"><span class="lbl">Margen bruto</span><span class="val">$32.9M · 58%</span></div>
+      </div>
+    </div>
+
+    <div class="sc-card">
+      <div class="sc-head gold">
+        <div class="sc-eyebrow">Escenario 2 · Real actual</div>
+        <div class="sc-title">Presencia promedio</div>
+        <div class="sc-subtitle">~9.6 días ausente · cobertura 60%</div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-divider">Revenue</div>
+        <div class="sc-row"><span class="lbl">Revenue del mes</span><span class="val gold-txt">$50.6M</span></div>
+        <div class="sc-row"><span class="lbl">Incl. cobertura ext.</span><span class="val">+$8.6M</span></div>
+        <div class="sc-divider">Costos estimados</div>
+        <div class="sc-row"><span class="lbl">Sueldo Denisse (fijo)</span><span class="val">$6.5M</span></div>
+        <div class="sc-row"><span class="lbl">Honorario médico ext.</span><span class="val gold-txt">$2.6M</span></div>
+        <div class="sc-row"><span class="lbl">Insumos 30% rev.</span><span class="val">$15.2M</span></div>
+        <div class="sc-row"><span class="lbl">Total costos</span><span class="val">$24.3M</span></div>
+        <div class="sc-divider">Resultado</div>
+        <div class="sc-row hi gold"><span class="lbl">Margen bruto</span><span class="val">$26.3M · 52%</span></div>
+      </div>
+    </div>
+
+    <div class="sc-card">
+      <div class="sc-head berry">
+        <div class="sc-eyebrow">Escenario 3 · Abril 2026</div>
+        <div class="sc-title">Mes sin Denisse</div>
+        <div class="sc-subtitle">20/22 días ausente · cobertura 60%</div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-divider">Revenue</div>
+        <div class="sc-row"><span class="lbl">Revenue del mes</span><span class="val red-txt">$44.3M</span></div>
+        <div class="sc-row"><span class="lbl">Incl. cobertura ext.</span><span class="val">+$18M</span></div>
+        <div class="sc-divider">Costos estimados</div>
+        <div class="sc-row"><span class="lbl">Sueldo Denisse (fijo)</span><span class="val">$6.5M</span></div>
+        <div class="sc-row"><span class="lbl">Honorario médico ext.</span><span class="val red-txt">$5.4M</span></div>
+        <div class="sc-row"><span class="lbl">Insumos 30% rev.</span><span class="val">$13.3M</span></div>
+        <div class="sc-row"><span class="lbl">Total costos</span><span class="val">$25.2M</span></div>
+        <div class="sc-divider">Resultado</div>
+        <div class="sc-row hi berry"><span class="lbl">Margen bruto</span><span class="val">$19.1M · 43%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert blue" style="margin-top:4px">
+    <div class="alert-title">Por qué los insumos bajan con más ausencias</div>
+    <p>Los insumos son el 30% del revenue total — un <strong>costo variable</strong>, no fijo. Con más ausencias hay menos actividad → menos servicios → menos materiales. No es un ahorro real, es simplemente que hay menos trabajo. El sueldo de Denisse ($6.5M) se paga igual. El honorario del médico externo, en cambio, <strong>sube</strong> con más ausencias porque hay más días que cubrir.</p>
+  </div>
+
+  <div class="section-title">Tabla comparativa resumida</div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>Concepto</th><th class="num">Presencia plena</th><th class="num">Prom. actual</th><th class="num">Sin Denisse (Abr)</th><th class="num">Diferencia plena → sin D</th></tr></thead>
+      <tbody>
+        <tr><td>Días ausente Denisse</td><td class="num">0</td><td class="num">9.6</td><td class="num">20</td><td class="num muted-txt">—</td></tr>
+        <tr><td>Revenue total del mes</td><td class="num sage-txt">$56.3M</td><td class="num gold-txt">$50.6M</td><td class="num red-txt">$44.3M</td><td class="num berry-txt">−$12M</td></tr>
+        <tr><td>Honorario médico externo (cob. gap)</td><td class="num sage-txt">$0</td><td class="num gold-txt">$2.6M</td><td class="num red-txt">$5.4M</td><td class="num berry-txt">+$5.4M</td></tr>
+        <tr><td>Insumos estimados (30%)</td><td class="num">$16.9M</td><td class="num">$15.2M</td><td class="num">$13.3M</td><td class="num muted-txt">(var. con revenue)</td></tr>
+        <tr><td>Total costos del mes</td><td class="num">$23.4M</td><td class="num">$24.3M</td><td class="num">$25.2M</td><td class="num berry-txt">+$1.8M</td></tr>
+        <tr class="bold"><td>Margen bruto</td><td class="num sage-txt">$32.9M · 58%</td><td class="num gold-txt">$26.3M · 52%</td><td class="num red-txt">$19.1M · 43%</td><td class="num berry-txt">−$13.8M · −15pp</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ TAB 3: PACIENTES ══════════════════════════════════════ -->
+<div id="pacientes" class="section">
+<div class="container">
+
+  <div class="alert blue">
+    <div class="alert-title">Metodología</div>
+    <p>Base: 190 pacientes/mes en el escenario promedio sin cobertura externa (dato observado Feb–Jun). Revenue por paciente estimado: $181.5M / 5 meses / 190 pac = <strong>~$191K/paciente</strong>. Para la estimación diaria se asume el mismo ticket promedio en todos los escenarios. Los días con Denisse tienen más pacientes porque ella los atrae y su servicio genera mayor ticket.</p>
+  </div>
+
+  <div class="g4">
+    <div class="kpi sage"><div class="kpi-lbl">Pac/día CON Denisse</div><div class="kpi-val">~12</div><div class="kpi-sub">Rev. $2.56M ÷ $220K ticket<br>Techo diario</div></div>
+    <div class="kpi red"><div class="kpi-lbl">Pac/día SIN Denisse (base)</div><div class="kpi-val">~5</div><div class="kpi-sub">Sin cobertura externa<br>Solo médicos base</div></div>
+    <div class="kpi gold"><div class="kpi-lbl">Pac/día SIN D (60% cob.)</div><div class="kpi-val">~9</div><div class="kpi-sub">Externos cubren 60% del gap<br>Rev. efectivo: $1.96M/día</div></div>
+    <div class="kpi steel"><div class="kpi-lbl">Pac/día SIN D (75% obj.)</div><div class="kpi-val">~10</div><div class="kpi-sub">Objetivo aspiracional<br>Rev. efectivo: $2.19M/día</div></div>
+  </div>
+
+  <div class="section-title">Pacientes totales del mes por escenario</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-head">Total pacientes/mes</div>
+      <div class="pac-bar-row">
+        <div class="pac-bar-lbl"><strong>Presencia plena (techo máximo)</strong><span style="font-family:monospace;color:var(--sage)"><strong>~255</strong></span></div>
+        <div class="pac-bar-track"><div class="pac-bar sage" style="width:100%">255</div></div>
+      </div>
+      <div class="pac-bar-row" style="margin-top:10px">
+        <div class="pac-bar-lbl"><strong>Promedio · objetivo 75%</strong><span style="font-family:monospace;color:var(--steel)"><strong>~239</strong></span></div>
+        <div class="pac-bar-track"><div class="pac-bar steel" style="width:93.7%">239</div></div>
+      </div>
+      <div class="pac-bar-row" style="margin-top:10px">
+        <div class="pac-bar-lbl"><strong>Promedio · cobertura actual 60%</strong><span style="font-family:monospace;color:var(--gold)"><strong>~229</strong></span></div>
+        <div class="pac-bar-track"><div class="pac-bar gold" style="width:89.8%">229</div></div>
+      </div>
+      <div class="pac-bar-row" style="margin-top:10px">
+        <div class="pac-bar-lbl"><strong>Mes sin Denisse — tipo Abril (60%)</strong><span style="font-family:monospace;color:var(--berry)"><strong>~201</strong></span></div>
+        <div class="pac-bar-track"><div class="pac-bar berry" style="width:78.8%">201</div></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);margin-top:14px">Subir la cobertura del 60% al 75% recupera ~10 pacientes adicionales por mes en el escenario promedio.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">Detalle por escenario — pacientes y revenue</div>
+      <table class="tbl">
+        <thead><tr><th>Escenario</th><th class="num">Pac/mes</th><th class="num">vs. plena</th><th class="num">Rev/mes</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Presencia plena</strong></td><td class="num sage-txt">~255</td><td class="num">—</td><td class="num sage-txt">$56.3M</td></tr>
+          <tr><td>Promedio · 75% cobertura</td><td class="num steel-txt">~239</td><td class="num steel-txt">−16</td><td class="num steel-txt">$51.7M</td></tr>
+          <tr><td>Promedio · 60% cobertura</td><td class="num gold-txt">~229</td><td class="num gold-txt">−26</td><td class="num gold-txt">$50.6M</td></tr>
+          <tr><td>Sin Denisse · tipo Abril (60%)</td><td class="num red-txt">~201</td><td class="num red-txt">−54</td><td class="num red-txt">$44.3M</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:16px">
+        <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--gold);margin-top:3px;flex-shrink:0"></div>
+          <div style="font-size:13px"><strong>Cobertura actual (60%)</strong><br><span style="color:var(--text2);font-size:11px">Externos recuperan $0.9M/día del gap. +4 pacientes/día vs. sin cobertura. Costo: 30% × $0.9M = $270K/día de honorario.</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--steel);margin-top:3px;flex-shrink:0"></div>
+          <div style="font-size:13px"><strong>Objetivo 75%</strong><br><span style="color:var(--text2);font-size:11px">Externos recuperan $1.125M/día. +1 paciente/día más vs. 60%. Ingreso extra: $225K/día sin Denisse. Vale la pena si el honorario adicional no sube proporcionalmente.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ TAB 4: BEAUTY PLAN ══════════════════════════════════════ -->
+<div id="beautyplan" class="section">
+<div class="container">
+
+  <div class="alert amber">
+    <div class="alert-title">Contexto crítico para las proyecciones del piloto</div>
+    <p>Las proyecciones del Beauty Plan usan 190 visitas/mes como base. Pero la realidad en el período: febrero 106, marzo 230, abril 173, mayo 293, junio 147. La dispersión es enorme y está directamente correlacionada con Denisse. Si el piloto arranca en julio con ella de regreso el 10/7, las primeras 2 semanas son base baja. La medición debe separar <strong>semanas con Denisse</strong> de <strong>semanas sin ella</strong>. De lo contrario, un mes malo puede parecer falla del sistema cuando es simplemente un mes de ausencia.</p>
+  </div>
+
+  <div class="section-title">Margen incremental del Beauty Plan · 20 planes/mes mínimo · precio avg $1.054M</div>
+  <div class="card" style="margin-bottom:18px">
+    <table class="tbl">
+      <thead><tr>
+        <th>Concepto</th>
+        <th class="num">Presencia plena<br><small style="font-weight:normal;opacity:.8">Den. ejecuta 20/20</small></th>
+        <th class="num">Promedio<br><small style="font-weight:normal;opacity:.8">Den. ~11, ext. ~9</small></th>
+        <th class="num">Sin Denisse (Abr)<br><small style="font-weight:normal;opacity:.8">Ext. ejecuta 20/20</small></th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Revenue Beauty Plan (20 planes)</td><td class="num">$21.1M</td><td class="num">$21.1M</td><td class="num">$21.1M</td></tr>
+        <tr><td>Insumos plan (30%)</td><td class="num">($6.3M)</td><td class="num">($6.3M)</td><td class="num">($6.3M)</td></tr>
+        <tr>
+          <td>Honorario médico ext. por planes<br><span style="font-size:11px;color:var(--muted)">0 si Denisse ejecuta · 30% × precio × planes externos</span></td>
+          <td class="num sage-txt">$0</td>
+          <td class="num gold-txt">($2.9M)</td>
+          <td class="num red-txt">($6.3M)</td>
+        </tr>
+        <tr><td>Comisión recepcionista (5% neto)</td><td class="num">($0.87M)</td><td class="num">($0.87M)</td><td class="num">($0.87M)</td></tr>
+        <tr class="bold">
+          <td>Margen incremental Beauty Plan</td>
+          <td class="num sage-txt">$13.9M · 66%</td>
+          <td class="num gold-txt">$11.0M · 52%</td>
+          <td class="num red-txt">$7.6M · 36%</td>
+        </tr>
+        <tr class="hl">
+          <td style="color:var(--berry)"><strong>Costo extra por ausencia de Denisse</strong><br><span style="font-size:11px">honorario adicional vs. si ella ejecutara todos</span></td>
+          <td class="num muted-txt">—</td>
+          <td class="num berry-txt"><strong>($2.9M)</strong></td>
+          <td class="num berry-txt"><strong>($6.3M)</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Margen del mes completo CON Beauty Plan activo</div>
+  <div class="card">
+    <table class="tbl">
+      <thead><tr><th>Concepto</th><th class="num">Presencia plena</th><th class="num">Promedio</th><th class="num">Sin Denisse</th></tr></thead>
+      <tbody>
+        <tr><td>Revenue base del mes (sin plan)</td><td class="num">$56.3M</td><td class="num">$50.6M</td><td class="num">$44.3M</td></tr>
+        <tr><td>+ Revenue Beauty Plan (20 planes)</td><td class="num">+$21.1M</td><td class="num">+$21.1M</td><td class="num">+$21.1M</td></tr>
+        <tr class="bold"><td>Revenue total del mes</td><td class="num">$77.4M</td><td class="num">$71.7M</td><td class="num">$65.4M</td></tr>
+        <tr><td>Costos base del mes</td><td class="num">$23.4M</td><td class="num">$24.3M</td><td class="num">$25.2M</td></tr>
+        <tr><td>Costos incrementales del plan</td><td class="num">$7.2M</td><td class="num">$10.1M</td><td class="num">$13.5M</td></tr>
+        <tr class="bold"><td>Margen bruto total del mes</td><td class="num sage-txt">$46.8M · 60%</td><td class="num gold-txt">$37.3M · 52%</td><td class="num red-txt">$26.7M · 41%</td></tr>
+        <tr class="hl"><td style="color:var(--sage)"><strong>Mejora vs. mes sin Beauty Plan</strong></td><td class="num sage-txt">+$13.9M</td><td class="num sage-txt">+$11.0M</td><td class="num gold-txt">+$7.6M</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--muted);margin-top:10px">El Beauty Plan agrega margen en todos los escenarios, pero el beneficio neto se reduce en 46% cuando Denisse no puede ejecutar los planes (de $13.9M a $7.6M).</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════ TAB 5: DECISIONES ══════════════════════════════════════ -->
+<div id="decisiones" class="section">
+<div class="container">
+
+  <div class="section-title">Decisiones necesarias para mitigar el riesgo</div>
+  <div class="card" style="margin-bottom:22px">
+    <table class="tbl">
+      <thead><tr><th>#</th><th>Decisión</th><th>Propuesta</th><th>Urgencia</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Calendario de ausencias H2 2026</strong></td>
+          <td>Confirmar con Denisse fechas de viaje julio–diciembre. Modelar metas del Beauty Plan por mes con presencia estimada.</td>
+          <td><span class="pill red">Alta</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>Protocolo de cobertura médica</strong></td>
+          <td>Definir qué médico externo cubre cada tipo de tratamiento de Denisse y con cuántos días de anticipación se activa. Hoy ~30% de sus pacientes no se reprograman — se pierden.</td>
+          <td><span class="pill red">Alta</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Objetivo de cobertura: subir de 60% a 75%</strong></td>
+          <td>El modelo muestra que subir la cobertura del gap del 60% al 75% recupera ~10 pacientes/mes y ~$1.1M de revenue adicional en días sin Denisse, por un costo incremental de ~$337K en honorarios. ROI positivo.</td>
+          <td><span class="pill amber">Media</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>Tablero con variable Denisse</strong></td>
+          <td>Agregar al dashboard mensual: "días con Denisse / días sin Denisse / revenue por tipo de día". Permite aislar el efecto y medir el Beauty Plan sobre base justa.</td>
+          <td><span class="pill amber">Media</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Protocolo de reprogramación proactiva</strong></td>
+          <td>Cuando Denisse anuncia viaje, recepción contacta a sus pacientes de los próximos 30 días y ofrece alternativas. Meta: reducir el 30% de pérdida de citas a menos del 15%.</td>
+          <td><span class="pill amber">Media</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">Puntos de conversación — para explicar el análisis</div>
+
+  <div class="tp">
+    <div class="tp-num">01 · EL NÚMERO MÁS IMPORTANTE</div>
+    <div class="tp-body">Cuando Denisse no está, la clínica no pierde el 43% del revenue — los otros médicos siguen trabajando. Pero sí pierde la diferencia: <strong>$1.5M de gap por cada día de ausencia</strong>. En un mes promedio (9.6 días ausente) eso es ~$14.4M de revenue potencial no capturado antes de cobertura externa.</div>
+  </div>
+  <div class="tp sage">
+    <div class="tp-num">02 · EL ROL DE LOS MÉDICOS EXTERNOS</div>
+    <div class="tp-body">Los externos cubren parte del gap pero con un costo: <strong>30% de comisión</strong> sobre el precio. Hoy asumimos 60% de cobertura del gap. Subir al 75% recupera ~$225K más de revenue por día de ausencia, con un costo incremental de ~$56K — ROI positivo.</div>
+  </div>
+  <div class="tp gold">
+    <div class="tp-num">03 · POR QUÉ LOS INSUMOS BAJAN CON MÁS AUSENCIAS</div>
+    <div class="tp-body">Los insumos son el 30% del revenue total — un costo variable. Con menos actividad hay menos materiales usados. No es un ahorro real, es simplemente que hay menos trabajo. El sueldo de Denisse ($6.5M) se paga igual. El honorario del externo, en cambio, sube con más ausencias.</div>
+  </div>
+  <div class="tp lav">
+    <div class="tp-num">04 · EL BEAUTY PLAN Y LA DEPENDENCIA DE DENISSE</div>
+    <div class="tp-body">El margen incremental del Beauty Plan depende de quién ejecuta los planes. Con Denisse: 66% de margen (su sueldo ya está pagado). Con médico externo: 36%. <strong>Escalar a 40 planes en un mes donde ella está ausente puede generar más costos que beneficios</strong> si no se controla quién ejecuta.</div>
+  </div>
+  <div class="tp steel">
+    <div class="tp-num">05 · CÓMO MEDIR EL BEAUTY PLAN CORRECTAMENTE</div>
+    <div class="tp-body">Nunca medir el plan con el revenue total del mes como denominador — ese número fluctúa 130% según esté o no Denisse. La métrica correcta es <strong>planes ejecutados / revenue del plan / margen incremental del plan</strong>, separados por semanas con Denisse presente y sin ella. Un mes malo puede ser simplemente un mes de ausencia.</div>
+  </div>
+
+</div>
+</div>
+
+<footer>
+  <span>BeautyDerm · Análisis interno Variable Denisse Rubio · Jun 2026</span>
+  <span>Fuente: Reservo Feb–Jun 2026 · Ref: BeautyDerm_Analisis_Financiero_BeautyPlan.xlsx</span>
+</footer>
+
+<script>
+Chart.defaults.font.family = 'Georgia, serif';
+Chart.defaults.color = '#7A7269';
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+const meses = ['Feb','Mar','Abr','May','Jun'];
+const revTotal = [17.2, 39.1, 30.0, 69.1, 26.2];
+const revDen   = [10.1, 10.1,  4.7, 37.6, 15.6];
+const revResto = revTotal.map((v,i) => +(v - revDen[i]).toFixed(1));
+const pctDen   = [59, 26, 16, 54, 60];
+const multiTr  = [25.2, 18.3, 17.3, 16.7, 12.9];
+const tickDen  = [210, 144, 264, 270, 208];
+const tickOtro = [123, 181, 163, 205, 147];
+
+// 1. Revenue stacked + % line
+new Chart(document.getElementById('chartRev'), {
+  data: {
+    labels: meses,
+    datasets: [
+      { type:'bar',  label:'Revenue Denisse ($M)',  data: revDen,   backgroundColor:'#6D2E46CC', borderRadius:4, order:2 },
+      { type:'bar',  label:'Revenue Resto ($M)',    data: revResto, backgroundColor:'#E4DDD2',   borderRadius:4, order:2 },
+      { type:'line', label:'% Denisse (eje der.)',  data: pctDen,   yAxisID:'y2', borderColor:'#B7770A',
+        backgroundColor:'#B7770A22', borderWidth:2, pointRadius:4, pointBackgroundColor:'#B7770A', tension:.3, order:1 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:true,
+    scales: {
+      x: { stacked:true, grid:{display:false} },
+      y: { stacked:true, grid:{color:'#E4DDD2'}, ticks:{callback:v=>'$'+v+'M'} },
+      y2:{ position:'right', grid:{display:false}, ticks:{callback:v=>v+'%'}, min:0, max:100 }
+    },
+    plugins:{ legend:{position:'bottom'} }
+  }
+});
+
+// 2. Multi-tratamiento
+new Chart(document.getElementById('chartMulti'), {
+  type:'line',
+  data:{
+    labels:meses,
+    datasets:[{
+      label:'Multi-tratamiento (%)',
+      data: multiTr,
+      borderColor:'#6B5A9E', backgroundColor:'#6B5A9E22',
+      borderWidth:2, pointRadius:5, pointBackgroundColor:'#6B5A9E', tension:.3, fill:true
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:true,
+    scales:{ x:{grid:{display:false}}, y:{grid:{color:'#E4DDD2'}, ticks:{callback:v=>v+'%'}, min:0, max:30} },
+    plugins:{ legend:{position:'bottom'} }
+  }
+});
+
+// 3. Ticket promedio
+new Chart(document.getElementById('chartTicket'), {
+  type:'bar',
+  data:{
+    labels: meses,
+    datasets:[
+      { label:'Ticket Denisse ($K)',      data: tickDen,  backgroundColor:'#6D2E46CC', borderRadius:4 },
+      { label:'Ticket resto equipo ($K)', data: tickOtro, backgroundColor:'#B8DDD1',   borderRadius:4 }
+    ]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:true,
+    scales:{ x:{grid:{display:false}}, y:{grid:{color:'#E4DDD2'}, ticks:{callback:v=>'$'+v+'K'}} },
+    plugins:{ legend:{position:'bottom'} }
+  }
+});
+
+// 4. Correlación revenue diario
+new Chart(document.getElementById('chartCorr'), {
+  type:'bar',
+  data:{
+    labels:['Días CON Denisse (52 días)','Días SIN Denisse (48 días)'],
+    datasets:[{
+      label:'Revenue promedio por día ($M)',
+      data:[2.56, 1.06],
+      backgroundColor:['#3D826ACC','#6D2E46CC'],
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:true,
+    scales:{ x:{grid:{display:false}}, y:{grid:{color:'#E4DDD2'}, ticks:{callback:v=>'$'+v+'M'}, max:3.2} },
+    plugins:{ legend:{display:false} }
+  }
+});
+
+// Tab switching
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
