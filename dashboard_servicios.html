@@ -171,15 +171,25 @@
 
 <div class="container">
 
+<!-- ALERTA TENDENCIA BAJISTA -->
+<div style="margin-top:22px;background:#FBF0F0;border:1px solid #EAC0C0;border-left:5px solid #C0392B;border-radius:8px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:16px;">
+  <span style="font-size:22px;">⚠</span>
+  <div>
+    <strong style="color:#C0392B;font-size:13px;">Tendencia bajista confirmada:</strong>
+    <span style="font-size:13px;color:#7A7269;"> la tasa multi-tratamiento cayó de <strong>25.2% en febrero</strong> a <strong>12.9% en junio</strong> — una caída del 49% en 5 meses sin programa formal. Sin incentivos, continúa bajando.</span>
+    <span style="font-size:12px;color:#B5ADA2;margin-left:12px;font-family:monospace;">Ver también: <a href="beautyderm_analisis_denisse.html" style="color:#6D2E46;text-decoration:none;">Análisis Variable Denisse →</a></span>
+  </div>
+</div>
+
 <!-- HIGHLIGHT: el número más importante -->
-<div style="margin-top:22px;" class="kpi-highlight">
+<div style="margin-top:0;" class="kpi-highlight">
   <div class="big">+219%</div>
   <div class="detail">
     <div class="title">Ticket cuando el paciente lleva 2 o más tratamientos en la misma visita</div>
-    <div class="desc">Este es el argumento central del Beauty Plan: cuando el equipo propone un plan de múltiples tratamientos, el ticket es significativamente mayor. Ya ocurre en 164 de 950 visitas atendidas (17%). El objetivo es llevarlo al 35–40%.</div>
+    <div class="desc">Este es el argumento central del Beauty Plan: cuando el equipo propone un plan de múltiples tratamientos, el ticket es significativamente mayor. Ya ocurre en 164 de 950 visitas atendidas (promedio 17%, <strong style="color:#C0392B">cayendo a 12.9% en junio</strong>). El objetivo es llevarlo al 35–40%.</div>
     <div class="vs">
       <div class="vs-item"><div class="v">$364K</div><div class="l">Ticket prom. por visita</div></div>
-      <div class="vs-item"><div class="v">17%</div><div class="l">Visitas multi-trat. hoy</div></div>
+      <div class="vs-item" style="border-color:#EAC0C0;"><div class="v" style="color:#C0392B;">12.9%</div><div class="l">Multi-trat. en junio (↓ de 25%)</div></div>
       <div class="vs-item"><div class="v">25%</div><div class="l">Arelis Moreno · multi-trat actual</div></div>
       <div class="vs-item"><div class="v">17%</div><div class="l">Dra. Rubio · multi-trat actual</div></div>
       <div class="vs-item"><div class="v">16%</div><div class="l">Dra. Lima · multi-trat actual</div></div>
@@ -188,7 +198,7 @@
 </div>
 
 <!-- KPIs -->
-<div class="kpi-grid">
+<div class="kpi-grid" style="grid-template-columns:repeat(5,1fr);">
   <div class="kpi gold">
     <div class="kpi-label">Revenue de pacientes</div>
     <div class="kpi-value">$345,5M</div>
@@ -208,6 +218,11 @@
     <div class="kpi-label">Pacientes únicos</div>
     <div class="kpi-value">1.215</div>
     <div class="kpi-sub">26% volvió más de 1 vez</div>
+  </div>
+  <div class="kpi rose" style="border-left-color:#C0392B;background:#FBF0F0;">
+    <div class="kpi-label" style="color:#C0392B;">Revenue atrib. Denisse</div>
+    <div class="kpi-value" style="color:#C0392B;">43%</div>
+    <div class="kpi-sub">$2.56M/día con ella<br>$1.06M/día sin ella (−59%)</div>
   </div>
 </div>
 
@@ -336,32 +351,32 @@
 <!-- ============ TAB: PLANES ============ -->
 <div id="tab-planes" class="tab-content">
   <div class="nota nota-sage">
-    Planes construidos desde <strong>patrones reales de comportamiento</strong>: pacientes que ya combinan estos tratamientos en visitas separadas. Los candidatos activos son pacientes que hoy lo hacen sin descuento. <strong>Descuento del plan (15% de referencia)</strong> — pendiente de definir con Abel.
+    <strong>10 planes validados con Abel</strong> en presentación formal (Jun 2026). Construidos desde patrones reales de comportamiento y estrategia de margen. <strong>Descuento del 10%</strong> sobre precio de lista por servicio — confirmado.
   </div>
 
-  <!-- Plan 1 -->
+  <div class="section-title" style="margin-top:8px;">Planes de 2 servicios</div>
+
+  <!-- P1: Labios + Toxina -->
   <div class="plan-card">
     <div class="plan-header">
       <div>
         <div class="plan-name">Plan Labios + Toxina</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">El combo más frecuente detectado · 15 pacientes ya lo hacen sin plan</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Armonización facial · combo más frecuente del dataset</div>
       </div>
       <div style="text-align:right;">
         <div class="plan-tag">ARMONIZACIÓN FACIAL</div>
-        <div class="plan-candidatos">▲ 15 candidatos activos</div>
       </div>
     </div>
     <div class="plan-items">
       <div class="plan-item">💉 Aumento de Labios <strong>$383.000</strong></div>
       <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
     </div>
-    <div class="plan-data-note">📊 El combo más frecuente entre todos los pares detectados — 15 pacientes ya lo combinan en visitas separadas, sin ningún plan formal.</div>
     <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$793.000</div><div class="desc">Precio individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$674.050 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan</div></div>
-      <div class="plan-price-col saving"><div class="price">$118.950</div><div class="desc">Ahorro del paciente</div></div>
+      <div class="plan-price-col"><div class="price">$793.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$713.700 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$79.300</div><div class="desc">Ahorro del paciente</div></div>
     </div>
-    <div class="pago-toggle" data-precio="674050">
+    <div class="pago-toggle" data-precio="713700">
       <div class="pago-btns">
         <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
         <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
@@ -371,29 +386,27 @@
     </div>
   </div>
 
-  <!-- Plan 2 -->
+  <!-- P2: Sculptra + Toxina -->
   <div class="plan-card sage">
     <div class="plan-header">
       <div>
         <div class="plan-name">Plan Sculptra + Toxina</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Combo bioestimulador + relajante muscular · 10 pacientes activos</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Bioestimulador + relajante muscular</div>
       </div>
       <div style="text-align:right;">
         <div class="plan-tag">BIOESTIMULADORES + TOXINA</div>
-        <div class="plan-candidatos">▲ 10 candidatos activos</div>
       </div>
     </div>
     <div class="plan-items">
       <div class="plan-item">💎 Sculptra – 1 vial <strong>$770.000</strong></div>
       <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
     </div>
-    <div class="plan-data-note">📊 2do combo más frecuente del dataset — 10 pacientes ya combinan Sculptra + Toxina en visitas separadas, sin plan ni descuento.</div>
     <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$1.180.000</div><div class="desc">Precio individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$1.003.000 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan</div></div>
-      <div class="plan-price-col saving"><div class="price">$177.000</div><div class="desc">Ahorro del paciente</div></div>
+      <div class="plan-price-col"><div class="price">$1.180.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.062.000 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$118.000</div><div class="desc">Ahorro del paciente</div></div>
     </div>
-    <div class="pago-toggle" data-precio="1003000">
+    <div class="pago-toggle" data-precio="1062000">
       <div class="pago-btns">
         <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
         <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
@@ -403,42 +416,107 @@
     </div>
   </div>
 
-  <!-- Plan 3: Toxina Anual (mantener) -->
-  <div class="plan-card sage">
-    <div class="plan-header">
-      <div><div class="plan-name">Plan Anual Toxina Botulínica · 3 sesiones</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:3px;">Paquete anual · ciclo cada 4 meses · pago por adelantado o en cuotas</div></div>
-      <div class="plan-tag">ARMONIZACIÓN FACIAL · ANUAL</div>
-    </div>
-    <div class="plan-items">
-      <div class="plan-item">💉 Toxina Botulínica – Tercio Superior × 3 sesiones <strong>$1.230.000</strong></div>
-    </div>
-    <div class="sinergia">La toxina botulínica requiere reaplicación cada 3–4 meses. Vendida como paquete anual, el paciente asegura las 3 sesiones del año con descuento, y el centro recibe el flujo de caja por adelantado (o en cuotas sin interés). 97 pacientes ya la hacen regularmente — ninguno tiene un paquete formal. <strong>Oportunidad directa: 76 pacientes probablemente vencidos para Q3.</strong></div>
-    <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$1.230.000</div><div class="desc">3 sesiones individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$1.045.500 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan anual</div></div>
-      <div class="plan-price-col saving"><div class="price">$184.500</div><div class="desc">Ahorro del paciente</div></div>
-    </div>
-    <div class="pago-toggle" data-precio="1045500">
-      <div class="pago-btns">
-        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
-        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
-        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
-      </div>
-      <div class="pago-result"></div>
-    </div>
-  </div>
-
-  <!-- Plan 4 -->
+  <!-- P3: Profhilo + Sculptra -->
   <div class="plan-card lavender">
     <div class="plan-header">
       <div>
-        <div class="plan-name">Plan Armonización Facial Completa</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Labios + Proyección + Toxina · trío detectado en visitas separadas</div>
+        <div class="plan-name">Plan Profhilo + Sculptra</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Doble bioestimulador · hidratación profunda + volumización</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="plan-tag">BIOESTIMULADORES</div>
+      </div>
+    </div>
+    <div class="plan-items">
+      <div class="plan-item">💧 Profhilo <strong>$590.000</strong></div>
+      <div class="plan-item">💎 Sculptra – 1 vial <strong>$770.000</strong></div>
+    </div>
+    <div class="plan-pricing">
+      <div class="plan-price-col"><div class="price">$1.360.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.224.000 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$136.000</div><div class="desc">Ahorro del paciente</div></div>
+    </div>
+    <div class="pago-toggle" data-precio="1224000">
+      <div class="pago-btns">
+        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
+        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
+        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
+      </div>
+      <div class="pago-result"></div>
+    </div>
+  </div>
+
+  <!-- P4: Relleno Ojeras + Toxina -->
+  <div class="plan-card rose">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Plan Relleno Ojeras + Toxina</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Rejuvenecimiento periocular + relajante muscular</div>
       </div>
       <div style="text-align:right;">
         <div class="plan-tag">ARMONIZACIÓN FACIAL</div>
-        <div class="plan-candidatos">▲ 6 candidatos activos</div>
+      </div>
+    </div>
+    <div class="plan-items">
+      <div class="plan-item">💧 Relleno Ojeras <strong>$421.000</strong></div>
+      <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
+    </div>
+    <div class="plan-pricing">
+      <div class="plan-price-col"><div class="price">$831.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$747.900 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$83.100</div><div class="desc">Ahorro del paciente</div></div>
+    </div>
+    <div class="pago-toggle" data-precio="747900">
+      <div class="pago-btns">
+        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
+        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
+        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
+      </div>
+      <div class="pago-result"></div>
+    </div>
+  </div>
+
+  <!-- P5: CO2 Facial + NCTF -->
+  <div class="plan-card steel">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Plan CO2 Facial + NCTF</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Láser resurfacing + mesoterapia revitalizante</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="plan-tag">LÁSER + MESOTERAPIA</div>
+      </div>
+    </div>
+    <div class="plan-items">
+      <div class="plan-item">🔬 Laser CO2 Cool Peel DEKA – Facial <strong>$393.000</strong></div>
+      <div class="plan-item">💉 NCTF 135 HA – Facial <strong>$279.000</strong></div>
+    </div>
+    <div class="plan-pricing">
+      <div class="plan-price-col"><div class="price">$672.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$604.800 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$67.200</div><div class="desc">Ahorro del paciente</div></div>
+    </div>
+    <div class="pago-toggle" data-precio="604800">
+      <div class="pago-btns">
+        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
+        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
+        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
+      </div>
+      <div class="pago-result"></div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:32px;">Planes de 3 servicios</div>
+
+  <!-- P6: Labios + Mentón + Toxina -->
+  <div class="plan-card">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Plan Labios + Mentón + Toxina</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Armonización completa inferior · el trío más solicitado</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="plan-tag">ARMONIZACIÓN FACIAL</div>
       </div>
     </div>
     <div class="plan-items">
@@ -446,13 +524,12 @@
       <div class="plan-item">🎯 Proyección de Mentón – 1 vial <strong>$399.000</strong></div>
       <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
     </div>
-    <div class="plan-data-note">📊 6 pacientes ya combinaron estos 3 tratamientos en visitas separadas — es el único trío completo con esa base real en datos.</div>
     <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$1.192.000</div><div class="desc">Precio individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$1.013.200 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan</div></div>
-      <div class="plan-price-col saving"><div class="price">$178.800</div><div class="desc">Ahorro del paciente</div></div>
+      <div class="plan-price-col"><div class="price">$1.192.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.072.800 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$119.200</div><div class="desc">Ahorro del paciente</div></div>
     </div>
-    <div class="pago-toggle" data-precio="1013200">
+    <div class="pago-toggle" data-precio="1072800">
       <div class="pago-btns">
         <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
         <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
@@ -462,29 +539,28 @@
     </div>
   </div>
 
-  <!-- Plan 5 -->
-  <div class="plan-card lavender">
+  <!-- P7: Labios + Mentón + Relleno Ojeras -->
+  <div class="plan-card sage">
     <div class="plan-header">
       <div>
-        <div class="plan-name">Plan Ojeras + Toxina</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Relleno Ojeras + Toxina · combinados en visitas separadas</div>
+        <div class="plan-name">Plan Labios + Mentón + Relleno Ojeras</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Armonización completa · tercio inferior + zona periocular</div>
       </div>
       <div style="text-align:right;">
         <div class="plan-tag">ARMONIZACIÓN FACIAL</div>
-        <div class="plan-candidatos">▲ 5 candidatos activos</div>
       </div>
     </div>
     <div class="plan-items">
+      <div class="plan-item">💉 Aumento de Labios <strong>$383.000</strong></div>
+      <div class="plan-item">🎯 Proyección de Mentón – 1 vial <strong>$399.000</strong></div>
       <div class="plan-item">💧 Relleno Ojeras <strong>$421.000</strong></div>
-      <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
     </div>
-    <div class="plan-data-note">📊 5 pacientes combinaron Relleno Ojeras + Toxina en distintas sesiones — sin descuento ni plan que los incentive a volver.</div>
     <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$831.000</div><div class="desc">Precio individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$706.350 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan</div></div>
-      <div class="plan-price-col saving"><div class="price">$124.650</div><div class="desc">Ahorro del paciente</div></div>
+      <div class="plan-price-col"><div class="price">$1.203.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.082.700 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$120.300</div><div class="desc">Ahorro del paciente</div></div>
     </div>
-    <div class="pago-toggle" data-precio="706350">
+    <div class="pago-toggle" data-precio="1082700">
       <div class="pago-btns">
         <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
         <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
@@ -494,30 +570,90 @@
     </div>
   </div>
 
-  <!-- Plan 6 -->
-  <div class="plan-card steel">
+  <!-- P8: Sculptra + Toxina + Labios -->
+  <div class="plan-card lavender">
     <div class="plan-header">
       <div>
-        <div class="plan-name">Plan Rejuvenecimiento Láser</div>
-        <div style="font-size:12px;color:var(--text2);margin-top:3px;">CO2 resurfacing + mesoterapia + toxina · pacientes que combinan láser con inyectables</div>
+        <div class="plan-name">Plan Sculptra + Toxina + Labios</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Bioestimulación + relajación + volumen labial</div>
       </div>
       <div style="text-align:right;">
-        <div class="plan-tag">LASER CO2 + TOXINA</div>
-        <div class="plan-candidatos">▲ 5 candidatos activos</div>
+        <div class="plan-tag">BIOESTIMULADORES + ARMONIZACIÓN</div>
       </div>
     </div>
     <div class="plan-items">
-      <div class="plan-item">🔬 Laser CO2 Cool Peel DEKA – Facial <strong>$393.000</strong></div>
-      <div class="plan-item">💉 NCTF 135 HA – Facial <strong>$279.000</strong></div>
+      <div class="plan-item">💎 Sculptra – 1 vial <strong>$770.000</strong></div>
+      <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
+      <div class="plan-item">💉 Aumento de Labios <strong>$383.000</strong></div>
+    </div>
+    <div class="plan-pricing">
+      <div class="plan-price-col"><div class="price">$1.563.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.406.700 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$156.300</div><div class="desc">Ahorro del paciente</div></div>
+    </div>
+    <div class="pago-toggle" data-precio="1406700">
+      <div class="pago-btns">
+        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
+        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
+        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
+      </div>
+      <div class="pago-result"></div>
+    </div>
+  </div>
+
+  <!-- P9: Profhilo + Sculptra + Toxina -->
+  <div class="plan-card rose">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Plan Profhilo + Sculptra + Toxina</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Triple acción anti-edad · el plan premium del portfolio</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="plan-tag">BIOESTIMULADORES + TOXINA</div>
+      </div>
+    </div>
+    <div class="plan-items">
+      <div class="plan-item">💧 Profhilo <strong>$590.000</strong></div>
+      <div class="plan-item">💎 Sculptra – 1 vial <strong>$770.000</strong></div>
       <div class="plan-item">⚡ Toxina Botulínica – Tercio Superior <strong>$410.000</strong></div>
     </div>
-    <div class="plan-data-note">📊 5 pacientes ya combinaron láser CO2 + toxina en sesiones distintas — el combo más frecuente dentro del perfil láser + inyectables.</div>
     <div class="plan-pricing">
-      <div class="plan-price-col"><div class="price">$1.082.000</div><div class="desc">Precio individual</div></div>
-      <div class="plan-price-col highlight"><div class="price">$919.700 <span class="discount-badge">−15%</span></div><div class="desc">Precio del plan</div></div>
-      <div class="plan-price-col saving"><div class="price">$162.300</div><div class="desc">Ahorro del paciente</div></div>
+      <div class="plan-price-col"><div class="price">$1.770.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.593.000 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$177.000</div><div class="desc">Ahorro del paciente</div></div>
     </div>
-    <div class="pago-toggle" data-precio="919700">
+    <div class="pago-toggle" data-precio="1593000">
+      <div class="pago-btns">
+        <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
+        <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
+        <button class="pago-btn" onclick="togglePago(this,'c6')">6 cuotas sin interés</button>
+      </div>
+      <div class="pago-result"></div>
+    </div>
+  </div>
+
+  <!-- P10: HarmonyCA + Labios + Mentón -->
+  <div class="plan-card steel">
+    <div class="plan-header">
+      <div>
+        <div class="plan-name">Plan HarmonyCA + Labios + Mentón</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:3px;">Bioestimulación + armonización completa del tercio inferior</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="plan-tag">BIOESTIMULADORES + ARMONIZACIÓN</div>
+      </div>
+    </div>
+    <div class="plan-items">
+      <div class="plan-item">✨ HarmonyCA <strong>$370.000</strong></div>
+      <div class="plan-item">💉 Aumento de Labios <strong>$383.000</strong></div>
+      <div class="plan-item">🎯 Proyección de Mentón – 1 vial <strong>$399.000</strong></div>
+    </div>
+    <div class="plan-pricing">
+      <div class="plan-price-col"><div class="price">$1.152.000</div><div class="desc">Precio lista</div></div>
+      <div class="plan-price-col highlight"><div class="price">$1.036.800 <span class="discount-badge">−10%</span></div><div class="desc">Precio Beauty Plan</div></div>
+      <div class="plan-price-col saving"><div class="price">$115.200</div><div class="desc">Ahorro del paciente</div></div>
+    </div>
+    <div class="pago-toggle" data-precio="1036800">
       <div class="pago-btns">
         <button class="pago-btn active" onclick="togglePago(this,'ef')">💵 Efectivo (−5% extra)</button>
         <button class="pago-btn" onclick="togglePago(this,'c3')">3 cuotas sin interés</button>
